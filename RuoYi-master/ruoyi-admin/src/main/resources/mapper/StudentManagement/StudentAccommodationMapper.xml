@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.StudentManagement.mapper.StudentAccommodationMapper">
+    
+    <resultMap type="StudentAccommodation" id="StudentAccommodationResult">
+        <result property="accommodationId"    column="accommodation_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="buildingNo"    column="building_no"    />
+        <result property="floor"    column="floor"    />
+        <result property="roomNo"    column="room_no"    />
+        <result property="checkInDate"    column="check_in_date"    />
+        <result property="checkOutDate"    column="check_out_date"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectStudentAccommodationVo">
+        select accommodation_id, student_id, building_no, floor, room_no, check_in_date, check_out_date, status from student_accommodation
+    </sql>
+
+    <select id="selectStudentAccommodationList" parameterType="StudentAccommodation" resultMap="StudentAccommodationResult">
+        <include refid="selectStudentAccommodationVo"/>
+        <where>  
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="buildingNo != null  and buildingNo != ''"> and building_no = #{buildingNo}</if>
+            <if test="floor != null  and floor != ''"> and floor = #{floor}</if>
+            <if test="roomNo != null  and roomNo != ''"> and room_no = #{roomNo}</if>
+            <if test="checkInDate != null "> and check_in_date = #{checkInDate}</if>
+            <if test="checkOutDate != null "> and check_out_date = #{checkOutDate}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentAccommodationByAccommodationId" parameterType="Long" resultMap="StudentAccommodationResult">
+        <include refid="selectStudentAccommodationVo"/>
+        where accommodation_id = #{accommodationId}
+    </select>
+
+    <insert id="insertStudentAccommodation" parameterType="StudentAccommodation" useGeneratedKeys="true" keyProperty="accommodationId">
+        insert into student_accommodation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="buildingNo != null and buildingNo != ''">building_no,</if>
+            <if test="floor != null and floor != ''">floor,</if>
+            <if test="roomNo != null and roomNo != ''">room_no,</if>
+            <if test="checkInDate != null">check_in_date,</if>
+            <if test="checkOutDate != null">check_out_date,</if>
+            <if test="status != null and status != ''">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="buildingNo != null and buildingNo != ''">#{buildingNo},</if>
+            <if test="floor != null and floor != ''">#{floor},</if>
+            <if test="roomNo != null and roomNo != ''">#{roomNo},</if>
+            <if test="checkInDate != null">#{checkInDate},</if>
+            <if test="checkOutDate != null">#{checkOutDate},</if>
+            <if test="status != null and status != ''">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentAccommodation" parameterType="StudentAccommodation">
+        update student_accommodation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="buildingNo != null and buildingNo != ''">building_no = #{buildingNo},</if>
+            <if test="floor != null and floor != ''">floor = #{floor},</if>
+            <if test="roomNo != null and roomNo != ''">room_no = #{roomNo},</if>
+            <if test="checkInDate != null">check_in_date = #{checkInDate},</if>
+            <if test="checkOutDate != null">check_out_date = #{checkOutDate},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+        </trim>
+        where accommodation_id = #{accommodationId}
+    </update>
+
+    <delete id="deleteStudentAccommodationByAccommodationId" parameterType="Long">
+        delete from student_accommodation where accommodation_id = #{accommodationId}
+    </delete>
+
+    <delete id="deleteStudentAccommodationByAccommodationIds" parameterType="String">
+        delete from student_accommodation where accommodation_id in 
+        <foreach item="accommodationId" collection="array" open="(" separator="," close=")">
+            #{accommodationId}
+        </foreach>
+    </delete>
+
+</mapper>

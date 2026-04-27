@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentDormMapper">
+    
+    <resultMap type="StudentDorm" id="StudentDormResult">
+        <result property="dormId"    column="dorm_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="dormNo"    column="dorm_no"    />
+        <result property="bedNo"    column="bed_no"    />
+        <result property="counselor"    column="counselor"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="schoolStatus"    column="school_status"    />
+    </resultMap>
+
+    <sql id="selectStudentDormVo">
+        select dorm_id, student_id, dorm_no, bed_no, counselor, teacher, school_status from student_dorm
+    </sql>
+
+    <select id="selectStudentDormList" parameterType="StudentDorm" resultMap="StudentDormResult">
+        <include refid="selectStudentDormVo"/>
+        <where>  
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="dormNo != null  and dormNo != ''"> and dorm_no = #{dormNo}</if>
+            <if test="bedNo != null  and bedNo != ''"> and bed_no = #{bedNo}</if>
+            <if test="counselor != null  and counselor != ''"> and counselor = #{counselor}</if>
+            <if test="teacher != null  and teacher != ''"> and teacher = #{teacher}</if>
+            <if test="schoolStatus != null  and schoolStatus != ''"> and school_status = #{schoolStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentDormByDormId" parameterType="Long" resultMap="StudentDormResult">
+        <include refid="selectStudentDormVo"/>
+        where dorm_id = #{dormId}
+    </select>
+
+    <insert id="insertStudentDorm" parameterType="StudentDorm" useGeneratedKeys="true" keyProperty="dormId">
+        insert into student_dorm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="dormNo != null">dorm_no,</if>
+            <if test="bedNo != null">bed_no,</if>
+            <if test="counselor != null">counselor,</if>
+            <if test="teacher != null">teacher,</if>
+            <if test="schoolStatus != null">school_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="dormNo != null">#{dormNo},</if>
+            <if test="bedNo != null">#{bedNo},</if>
+            <if test="counselor != null">#{counselor},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="schoolStatus != null">#{schoolStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentDorm" parameterType="StudentDorm">
+        update student_dorm
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="dormNo != null">dorm_no = #{dormNo},</if>
+            <if test="bedNo != null">bed_no = #{bedNo},</if>
+            <if test="counselor != null">counselor = #{counselor},</if>
+            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="schoolStatus != null">school_status = #{schoolStatus},</if>
+        </trim>
+        where dorm_id = #{dormId}
+    </update>
+
+    <delete id="deleteStudentDormByDormId" parameterType="Long">
+        delete from student_dorm where dorm_id = #{dormId}
+    </delete>
+
+    <delete id="deleteStudentDormByDormIds" parameterType="String">
+        delete from student_dorm where dorm_id in 
+        <foreach item="dormId" collection="array" open="(" separator="," close=")">
+            #{dormId}
+        </foreach>
+    </delete>
+
+</mapper>

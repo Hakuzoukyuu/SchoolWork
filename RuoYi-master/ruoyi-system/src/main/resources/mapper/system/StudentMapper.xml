@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentMapper">
+    
+    <resultMap type="Student" id="StudentResult">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentNo"    column="student_no"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="gender"    column="gender"    />
+        <result property="birthDate"    column="birth_date"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="ethnic"    column="ethnic"    />
+        <result property="political"    column="political"    />
+        <result property="bloodType"    column="blood_type"    />
+        <result property="height"    column="height"    />
+        <result property="weight"    column="weight"    />
+        <result property="phone"    column="phone"    />
+        <result property="parentPhone"    column="parent_phone"    />
+        <result property="email"    column="email"    />
+        <result property="wechat"    column="wechat"    />
+        <result property="qq"    column="qq"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStudentVo">
+        select student_id, student_no, student_name, gender, birth_date, id_card, ethnic, political, blood_type, height, weight, phone, parent_phone, email, wechat, qq, remark, create_time, update_time from student
+    </sql>
+
+    <select id="selectStudentList" parameterType="Student" resultMap="StudentResult">
+        <include refid="selectStudentVo"/>
+        <where>  
+            <if test="studentNo != null  and studentNo != ''"> and student_no = #{studentNo}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="birthDate != null "> and birth_date = #{birthDate}</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="ethnic != null  and ethnic != ''"> and ethnic = #{ethnic}</if>
+            <if test="political != null  and political != ''"> and political = #{political}</if>
+            <if test="bloodType != null  and bloodType != ''"> and blood_type = #{bloodType}</if>
+            <if test="height != null "> and height = #{height}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="parentPhone != null  and parentPhone != ''"> and parent_phone = #{parentPhone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="wechat != null  and wechat != ''"> and wechat = #{wechat}</if>
+            <if test="qq != null  and qq != ''"> and qq = #{qq}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentByStudentId" parameterType="Long" resultMap="StudentResult">
+        <include refid="selectStudentVo"/>
+        where student_id = #{studentId}
+    </select>
+
+    <insert id="insertStudent" parameterType="Student" useGeneratedKeys="true" keyProperty="studentId">
+        insert into student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentNo != null">student_no,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="gender != null">gender,</if>
+            <if test="birthDate != null">birth_date,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="ethnic != null">ethnic,</if>
+            <if test="political != null">political,</if>
+            <if test="bloodType != null">blood_type,</if>
+            <if test="height != null">height,</if>
+            <if test="weight != null">weight,</if>
+            <if test="phone != null">phone,</if>
+            <if test="parentPhone != null">parent_phone,</if>
+            <if test="email != null">email,</if>
+            <if test="wechat != null">wechat,</if>
+            <if test="qq != null">qq,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentNo != null">#{studentNo},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="birthDate != null">#{birthDate},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="ethnic != null">#{ethnic},</if>
+            <if test="political != null">#{political},</if>
+            <if test="bloodType != null">#{bloodType},</if>
+            <if test="height != null">#{height},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="parentPhone != null">#{parentPhone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="wechat != null">#{wechat},</if>
+            <if test="qq != null">#{qq},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudent" parameterType="Student">
+        update student
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentNo != null">student_no = #{studentNo},</if>
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="birthDate != null">birth_date = #{birthDate},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="ethnic != null">ethnic = #{ethnic},</if>
+            <if test="political != null">political = #{political},</if>
+            <if test="bloodType != null">blood_type = #{bloodType},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="parentPhone != null">parent_phone = #{parentPhone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="wechat != null">wechat = #{wechat},</if>
+            <if test="qq != null">qq = #{qq},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteStudentByStudentId" parameterType="Long">
+        delete from student where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteStudentByStudentIds" parameterType="String">
+        delete from student where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+
+</mapper>

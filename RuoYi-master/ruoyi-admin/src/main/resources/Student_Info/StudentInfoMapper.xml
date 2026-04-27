@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.studentinfo.mapper.StudentInfoMapper">
+    
+    <resultMap type="StudentInfo" id="StudentInfoResult">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="gender"    column="gender"    />
+        <result property="college"    column="college"    />
+        <result property="major"    column="major"    />
+        <result property="className"    column="class_name"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <resultMap id="StudentInfoStudentAccommodationResult" type="StudentInfo" extends="StudentInfoResult">
+        <collection property="studentAccommodationList" ofType="StudentAccommodation" column="student_id" select="selectStudentAccommodationList" />
+    </resultMap>
+
+    <resultMap type="StudentAccommodation" id="StudentAccommodationResult">
+        <result property="accommodationId"    column="accommodation_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="buildingNo"    column="building_no"    />
+        <result property="floor"    column="floor"    />
+        <result property="roomNo"    column="room_no"    />
+        <result property="bedNo"    column="bed_no"    />
+        <result property="checkInDate"    column="check_in_date"    />
+        <result property="checkOutDate"    column="check_out_date"    />
+        <result property="status"    column="status"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <sql id="selectStudentInfoVo">
+        select student_id, student_name, gender, college, major, class_name, created_at, updated_at from student_info
+    </sql>
+
+    <select id="selectStudentInfoList" parameterType="StudentInfo" resultMap="StudentInfoResult">
+        <include refid="selectStudentInfoVo"/>
+        <where>  
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="college != null  and college != ''"> and college = #{college}</if>
+            <if test="major != null  and major != ''"> and major = #{major}</if>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="updatedAt != null "> and updated_at = #{updatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentInfoByStudentId" parameterType="String" resultMap="StudentInfoStudentAccommodationResult">
+        select student_id, student_name, gender, college, major, class_name, created_at, updated_at
+        from student_info
+        where student_id = #{studentId}
+    </select>
+
+    <select id="selectStudentAccommodationList" resultMap="StudentAccommodationResult">
+        select accommodation_id, student_id, building_no, floor, room_no, bed_no, check_in_date, check_out_date, status, created_at, updated_at
+        from student_accommodation
+        where student_id = #{student_id}
+    </select>
+
+    <insert id="insertStudentInfo" parameterType="StudentInfo">
+        insert into student_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="gender != null">gender,</if>
+            <if test="college != null">college,</if>
+            <if test="major != null">major,</if>
+            <if test="className != null">class_name,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="college != null">#{college},</if>
+            <if test="major != null">#{major},</if>
+            <if test="className != null">#{className},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentInfo" parameterType="StudentInfo">
+        update student_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="college != null">college = #{college},</if>
+            <if test="major != null">major = #{major},</if>
+            <if test="className != null">class_name = #{className},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteStudentInfoByStudentId" parameterType="String">
+        delete from student_info where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteStudentInfoByStudentIds" parameterType="String">
+        delete from student_info where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteStudentAccommodationByStudentIds" parameterType="String">
+        delete from student_accommodation where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteStudentAccommodationByStudentId" parameterType="String">
+        delete from student_accommodation where student_id = #{studentId}
+    </delete>
+
+    <insert id="batchStudentAccommodation">
+        insert into student_accommodation( accommodation_id, student_id, building_no, floor, room_no, bed_no, check_in_date, check_out_date, status, created_at, updated_at) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.accommodationId}, #{item.studentId}, #{item.buildingNo}, #{item.floor}, #{item.roomNo}, #{item.bedNo}, #{item.checkInDate}, #{item.checkOutDate}, #{item.status}, #{item.createdAt}, #{item.updatedAt})
+        </foreach>
+    </insert>
+
+</mapper>
