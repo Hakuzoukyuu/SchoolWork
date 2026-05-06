@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentInternshipMapper">
+    
+    <resultMap type="StudentInternship" id="StudentInternshipResult">
+        <result property="internshipId"    column="internship_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="studentType"    column="student_type"    />
+        <result property="major"    column="major"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="internshipPost"    column="internship_post"    />
+        <result property="internshipStart"    column="internship_start"    />
+        <result property="internshipEnd"    column="internship_end"    />
+        <result property="internshipStatus"    column="internship_status"    />
+        <result property="reportStatus"    column="report_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStudentInternshipVo">
+        select internship_id, student_id, student_name, student_type, major, company_id, internship_post, internship_start, internship_end, internship_status, report_status, remark, create_time, update_time from student_internship
+    </sql>
+
+    <select id="selectStudentInternshipList" parameterType="StudentInternship" resultMap="StudentInternshipResult">
+        <include refid="selectStudentInternshipVo"/>
+        <where>  
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="studentType != null  and studentType != ''"> and student_type = #{studentType}</if>
+            <if test="major != null  and major != ''"> and major = #{major}</if>
+            <if test="companyId != null  and companyId != ''"> and company_id = #{companyId}</if>
+            <if test="internshipPost != null  and internshipPost != ''"> and internship_post = #{internshipPost}</if>
+            <if test="internshipStart != null "> and internship_start = #{internshipStart}</if>
+            <if test="internshipEnd != null "> and internship_end = #{internshipEnd}</if>
+            <if test="internshipStatus != null  and internshipStatus != ''"> and internship_status = #{internshipStatus}</if>
+            <if test="reportStatus != null  and reportStatus != ''"> and report_status = #{reportStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentInternshipByInternshipId" parameterType="String" resultMap="StudentInternshipResult">
+        <include refid="selectStudentInternshipVo"/>
+        where internship_id = #{internshipId}
+    </select>
+
+    <insert id="insertStudentInternship" parameterType="StudentInternship">
+        insert into student_internship
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="internshipId != null">internship_id,</if>
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="studentType != null">student_type,</if>
+            <if test="major != null">major,</if>
+            <if test="companyId != null and companyId != ''">company_id,</if>
+            <if test="internshipPost != null">internship_post,</if>
+            <if test="internshipStart != null">internship_start,</if>
+            <if test="internshipEnd != null">internship_end,</if>
+            <if test="internshipStatus != null">internship_status,</if>
+            <if test="reportStatus != null">report_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="internshipId != null">#{internshipId},</if>
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="studentType != null">#{studentType},</if>
+            <if test="major != null">#{major},</if>
+            <if test="companyId != null and companyId != ''">#{companyId},</if>
+            <if test="internshipPost != null">#{internshipPost},</if>
+            <if test="internshipStart != null">#{internshipStart},</if>
+            <if test="internshipEnd != null">#{internshipEnd},</if>
+            <if test="internshipStatus != null">#{internshipStatus},</if>
+            <if test="reportStatus != null">#{reportStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentInternship" parameterType="StudentInternship">
+        update student_internship
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="studentType != null">student_type = #{studentType},</if>
+            <if test="major != null">major = #{major},</if>
+            <if test="companyId != null and companyId != ''">company_id = #{companyId},</if>
+            <if test="internshipPost != null">internship_post = #{internshipPost},</if>
+            <if test="internshipStart != null">internship_start = #{internshipStart},</if>
+            <if test="internshipEnd != null">internship_end = #{internshipEnd},</if>
+            <if test="internshipStatus != null">internship_status = #{internshipStatus},</if>
+            <if test="reportStatus != null">report_status = #{reportStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where internship_id = #{internshipId}
+    </update>
+
+    <delete id="deleteStudentInternshipByInternshipId" parameterType="String">
+        delete from student_internship where internship_id = #{internshipId}
+    </delete>
+
+    <delete id="deleteStudentInternshipByInternshipIds" parameterType="String">
+        delete from student_internship where internship_id in 
+        <foreach item="internshipId" collection="array" open="(" separator="," close=")">
+            #{internshipId}
+        </foreach>
+    </delete>
+
+</mapper>

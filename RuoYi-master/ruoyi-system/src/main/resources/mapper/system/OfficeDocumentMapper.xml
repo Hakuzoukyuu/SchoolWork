@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OfficeDocumentMapper">
+    
+    <resultMap type="OfficeDocument" id="OfficeDocumentResult">
+        <result property="docId"    column="doc_id"    />
+        <result property="docTitle"    column="doc_title"    />
+        <result property="docNo"    column="doc_no"    />
+        <result property="docType"    column="doc_type"    />
+        <result property="docContent"    column="doc_content"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="sender"    column="sender"    />
+        <result property="receiver"    column="receiver"    />
+        <result property="flowStatus"    column="flow_status"    />
+        <result property="currentApprover"    column="current_approver"    />
+        <result property="approveHistory"    column="approve_history"    />
+        <result property="archiveTime"    column="archive_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectOfficeDocumentVo">
+        select doc_id, doc_title, doc_no, doc_type, doc_content, file_url, sender, receiver, flow_status, current_approver, approve_history, archive_time, remark, create_time, update_time from office_document
+    </sql>
+
+    <select id="selectOfficeDocumentList" parameterType="OfficeDocument" resultMap="OfficeDocumentResult">
+        <include refid="selectOfficeDocumentVo"/>
+        <where>  
+            <if test="docTitle != null  and docTitle != ''"> and doc_title = #{docTitle}</if>
+            <if test="docNo != null  and docNo != ''"> and doc_no = #{docNo}</if>
+            <if test="docType != null  and docType != ''"> and doc_type = #{docType}</if>
+            <if test="docContent != null  and docContent != ''"> and doc_content = #{docContent}</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
+            <if test="sender != null  and sender != ''"> and sender = #{sender}</if>
+            <if test="receiver != null  and receiver != ''"> and receiver = #{receiver}</if>
+            <if test="flowStatus != null  and flowStatus != ''"> and flow_status = #{flowStatus}</if>
+            <if test="currentApprover != null  and currentApprover != ''"> and current_approver = #{currentApprover}</if>
+            <if test="approveHistory != null  and approveHistory != ''"> and approve_history = #{approveHistory}</if>
+            <if test="archiveTime != null "> and archive_time = #{archiveTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectOfficeDocumentByDocId" parameterType="Long" resultMap="OfficeDocumentResult">
+        <include refid="selectOfficeDocumentVo"/>
+        where doc_id = #{docId}
+    </select>
+
+    <insert id="insertOfficeDocument" parameterType="OfficeDocument" useGeneratedKeys="true" keyProperty="docId">
+        insert into office_document
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="docTitle != null and docTitle != ''">doc_title,</if>
+            <if test="docNo != null and docNo != ''">doc_no,</if>
+            <if test="docType != null and docType != ''">doc_type,</if>
+            <if test="docContent != null">doc_content,</if>
+            <if test="fileUrl != null">file_url,</if>
+            <if test="sender != null">sender,</if>
+            <if test="receiver != null">receiver,</if>
+            <if test="flowStatus != null and flowStatus != ''">flow_status,</if>
+            <if test="currentApprover != null">current_approver,</if>
+            <if test="approveHistory != null">approve_history,</if>
+            <if test="archiveTime != null">archive_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="docTitle != null and docTitle != ''">#{docTitle},</if>
+            <if test="docNo != null and docNo != ''">#{docNo},</if>
+            <if test="docType != null and docType != ''">#{docType},</if>
+            <if test="docContent != null">#{docContent},</if>
+            <if test="fileUrl != null">#{fileUrl},</if>
+            <if test="sender != null">#{sender},</if>
+            <if test="receiver != null">#{receiver},</if>
+            <if test="flowStatus != null and flowStatus != ''">#{flowStatus},</if>
+            <if test="currentApprover != null">#{currentApprover},</if>
+            <if test="approveHistory != null">#{approveHistory},</if>
+            <if test="archiveTime != null">#{archiveTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOfficeDocument" parameterType="OfficeDocument">
+        update office_document
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="docTitle != null and docTitle != ''">doc_title = #{docTitle},</if>
+            <if test="docNo != null and docNo != ''">doc_no = #{docNo},</if>
+            <if test="docType != null and docType != ''">doc_type = #{docType},</if>
+            <if test="docContent != null">doc_content = #{docContent},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+            <if test="sender != null">sender = #{sender},</if>
+            <if test="receiver != null">receiver = #{receiver},</if>
+            <if test="flowStatus != null and flowStatus != ''">flow_status = #{flowStatus},</if>
+            <if test="currentApprover != null">current_approver = #{currentApprover},</if>
+            <if test="approveHistory != null">approve_history = #{approveHistory},</if>
+            <if test="archiveTime != null">archive_time = #{archiveTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where doc_id = #{docId}
+    </update>
+
+    <delete id="deleteOfficeDocumentByDocId" parameterType="Long">
+        delete from office_document where doc_id = #{docId}
+    </delete>
+
+    <delete id="deleteOfficeDocumentByDocIds" parameterType="String">
+        delete from office_document where doc_id in 
+        <foreach item="docId" collection="array" open="(" separator="," close=")">
+            #{docId}
+        </foreach>
+    </delete>
+
+</mapper>

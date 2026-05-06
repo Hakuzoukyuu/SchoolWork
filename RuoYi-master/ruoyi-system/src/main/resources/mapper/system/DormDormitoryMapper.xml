@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DormDormitoryMapper">
+    
+    <resultMap type="DormDormitory" id="DormDormitoryResult">
+        <result property="dormId"    column="dorm_id"    />
+        <result property="buildingName"    column="building_name"    />
+        <result property="dormNo"    column="dorm_no"    />
+        <result property="floorNum"    column="floor_num"    />
+        <result property="maxBed"    column="max_bed"    />
+        <result property="dormType"    column="dorm_type"    />
+        <result property="dormHygiene"    column="dorm_hygiene"    />
+        <result property="dormCheckStatus"    column="dorm_check_status"    />
+        <result property="managerName"    column="manager_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="DormDormitoryDormBedResult" type="DormDormitory" extends="DormDormitoryResult">
+        <collection property="dormBedList" ofType="DormBed" column="dorm_id" select="selectDormBedList" />
+    </resultMap>
+
+    <resultMap type="DormBed" id="DormBedResult">
+        <result property="bedId"    column="bed_id"    />
+        <result property="dormId"    column="dorm_id"    />
+        <result property="bedNo"    column="bed_no"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="bedStatus"    column="bed_status"    />
+        <result property="dailyHygiene"    column="daily_hygiene"    />
+        <result property="nightCheck"    column="night_check"    />
+        <result property="checkTime"    column="check_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDormDormitoryVo">
+        select dorm_id, building_name, dorm_no, floor_num, max_bed, dorm_type, dorm_hygiene, dorm_check_status, manager_name, remark, create_time, update_time from dorm_dormitory
+    </sql>
+
+    <select id="selectDormDormitoryList" parameterType="DormDormitory" resultMap="DormDormitoryResult">
+        <include refid="selectDormDormitoryVo"/>
+        <where>  
+            <if test="buildingName != null  and buildingName != ''"> and building_name like concat('%', #{buildingName}, '%')</if>
+            <if test="dormNo != null  and dormNo != ''"> and dorm_no = #{dormNo}</if>
+            <if test="floorNum != null "> and floor_num = #{floorNum}</if>
+            <if test="maxBed != null "> and max_bed = #{maxBed}</if>
+            <if test="dormType != null  and dormType != ''"> and dorm_type = #{dormType}</if>
+            <if test="dormHygiene != null  and dormHygiene != ''"> and dorm_hygiene = #{dormHygiene}</if>
+            <if test="dormCheckStatus != null  and dormCheckStatus != ''"> and dorm_check_status = #{dormCheckStatus}</if>
+            <if test="managerName != null  and managerName != ''"> and manager_name like concat('%', #{managerName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectDormDormitoryByDormId" parameterType="Long" resultMap="DormDormitoryDormBedResult">
+        select dorm_id, building_name, dorm_no, floor_num, max_bed, dorm_type, dorm_hygiene, dorm_check_status, manager_name, remark, create_time, update_time
+        from dorm_dormitory
+        where dorm_id = #{dormId}
+    </select>
+
+    <select id="selectDormBedList" resultMap="DormBedResult">
+        select bed_id, dorm_id, bed_no, student_id, student_name, bed_status, daily_hygiene, night_check, check_time, remark, create_time, update_time
+        from dorm_bed
+        where dorm_id = #{dorm_id}
+    </select>
+
+    <insert id="insertDormDormitory" parameterType="DormDormitory" useGeneratedKeys="true" keyProperty="dormId">
+        insert into dorm_dormitory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="buildingName != null and buildingName != ''">building_name,</if>
+            <if test="dormNo != null and dormNo != ''">dorm_no,</if>
+            <if test="floorNum != null">floor_num,</if>
+            <if test="maxBed != null">max_bed,</if>
+            <if test="dormType != null and dormType != ''">dorm_type,</if>
+            <if test="dormHygiene != null and dormHygiene != ''">dorm_hygiene,</if>
+            <if test="dormCheckStatus != null and dormCheckStatus != ''">dorm_check_status,</if>
+            <if test="managerName != null">manager_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="buildingName != null and buildingName != ''">#{buildingName},</if>
+            <if test="dormNo != null and dormNo != ''">#{dormNo},</if>
+            <if test="floorNum != null">#{floorNum},</if>
+            <if test="maxBed != null">#{maxBed},</if>
+            <if test="dormType != null and dormType != ''">#{dormType},</if>
+            <if test="dormHygiene != null and dormHygiene != ''">#{dormHygiene},</if>
+            <if test="dormCheckStatus != null and dormCheckStatus != ''">#{dormCheckStatus},</if>
+            <if test="managerName != null">#{managerName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDormDormitory" parameterType="DormDormitory">
+        update dorm_dormitory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="buildingName != null and buildingName != ''">building_name = #{buildingName},</if>
+            <if test="dormNo != null and dormNo != ''">dorm_no = #{dormNo},</if>
+            <if test="floorNum != null">floor_num = #{floorNum},</if>
+            <if test="maxBed != null">max_bed = #{maxBed},</if>
+            <if test="dormType != null and dormType != ''">dorm_type = #{dormType},</if>
+            <if test="dormHygiene != null and dormHygiene != ''">dorm_hygiene = #{dormHygiene},</if>
+            <if test="dormCheckStatus != null and dormCheckStatus != ''">dorm_check_status = #{dormCheckStatus},</if>
+            <if test="managerName != null">manager_name = #{managerName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where dorm_id = #{dormId}
+    </update>
+
+    <delete id="deleteDormDormitoryByDormId" parameterType="Long">
+        delete from dorm_dormitory where dorm_id = #{dormId}
+    </delete>
+
+    <delete id="deleteDormDormitoryByDormIds" parameterType="String">
+        delete from dorm_dormitory where dorm_id in 
+        <foreach item="dormId" collection="array" open="(" separator="," close=")">
+            #{dormId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteDormBedByDormIds" parameterType="String">
+        delete from dorm_bed where dorm_id in 
+        <foreach item="dormId" collection="array" open="(" separator="," close=")">
+            #{dormId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteDormBedByDormId" parameterType="Long">
+        delete from dorm_bed where dorm_id = #{dormId}
+    </delete>
+
+    <insert id="batchDormBed">
+        insert into dorm_bed( bed_id, dorm_id, bed_no, student_id, student_name, bed_status, daily_hygiene, night_check, check_time, remark, create_time, update_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.bedId}, #{item.dormId}, #{item.bedNo}, #{item.studentId}, #{item.studentName}, #{item.bedStatus}, #{item.dailyHygiene}, #{item.nightCheck}, #{item.checkTime}, #{item.remark}, #{item.createTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+</mapper>

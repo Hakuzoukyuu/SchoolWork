@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('学籍信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>关联学生ID：</label>
+                                <input type="text" name="studentId"/>
+                            </li>
+                            <li>
+                                <label>院系/学部：</label>
+                                <input type="text" name="college"/>
+                            </li>
+                            <li>
+                                <label>专业：</label>
+                                <input type="text" name="major"/>
+                            </li>
+                            <li>
+                                <label>年级：</label>
+                                <input type="text" name="grade"/>
+                            </li>
+                            <li>
+                                <label>班级：</label>
+                                <input type="text" name="className"/>
+                            </li>
+                            <li>
+                                <label>学制：</label>
+                                <input type="text" name="studyLength"/>
+                            </li>
+                            <li>
+                                <label>学生证号：</label>
+                                <input type="text" name="studentCardNo"/>
+                            </li>
+                            <li>
+                                <label>入学日期：</label>
+                                <input type="text" class="time-input" placeholder="请选择入学日期" name="comeDate"/>
+                            </li>
+                            <li>
+                                <label>预计毕业日期：</label>
+                                <input type="text" class="time-input" placeholder="请选择预计毕业日期" name="graduateDate"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:academic:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:academic:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:academic:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:academic:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:academic:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:academic:remove')}]];
+        var prefix = ctx + "system/academic";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "学籍信息",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'academicId',
+                    title: '学籍主键',
+                    visible: false
+                },
+                {
+                    field: 'studentId',
+                    title: '关联学生ID'
+                },
+                {
+                    field: 'college',
+                    title: '院系/学部'
+                },
+                {
+                    field: 'major',
+                    title: '专业'
+                },
+                {
+                    field: 'grade',
+                    title: '年级'
+                },
+                {
+                    field: 'className',
+                    title: '班级'
+                },
+                {
+                    field: 'studyLength',
+                    title: '学制'
+                },
+                {
+                    field: 'studentCardNo',
+                    title: '学生证号'
+                },
+                {
+                    field: 'studentStatus',
+                    title: '学籍状态'
+                },
+                {
+                    field: 'comeDate',
+                    title: '入学日期'
+                },
+                {
+                    field: 'graduateDate',
+                    title: '预计毕业日期'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.academicId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.academicId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('招生管理(志愿通过-未正式录取学生)列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>学生编号：</label>
+                                <input type="text" name="studentId"/>
+                            </li>
+                            <li>
+                                <label>学生姓名：</label>
+                                <input type="text" name="studentName"/>
+                            </li>
+                            <li>
+                                <label>联系电话：</label>
+                                <input type="text" name="phone"/>
+                            </li>
+                            <li>
+                                <label>身份证号：</label>
+                                <input type="text" name="idCard"/>
+                            </li>
+                            <li>
+                                <label>报考专业：</label>
+                                <input type="text" name="applyMajor"/>
+                            </li>
+                            <li>
+                                <label>拟录取分班：</label>
+                                <input type="text" name="className"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:admission:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:admission:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:admission:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:admission:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:admission:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:admission:remove')}]];
+        var prefix = ctx + "system/admission";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "招生管理(志愿通过-未正式录取学生)",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'studentId',
+                    title: '学生编号'
+                },
+                {
+                    field: 'studentName',
+                    title: '学生姓名'
+                },
+                {
+                    field: 'studentType',
+                    title: '学生类型：本科生/研究生'
+                },
+                {
+                    field: 'phone',
+                    title: '联系电话'
+                },
+                {
+                    field: 'idCard',
+                    title: '身份证号'
+                },
+                {
+                    field: 'applyMajor',
+                    title: '报考专业'
+                },
+                {
+                    field: 'auditStatus',
+                    title: '志愿审核状态：已通过'
+                },
+                {
+                    field: 'admitStatus',
+                    title: '录取状态：未录取'
+                },
+                {
+                    field: 'className',
+                    title: '拟录取分班'
+                },
+                {
+                    field: 'preRegisterStatus',
+                    title: '预注册状态'
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

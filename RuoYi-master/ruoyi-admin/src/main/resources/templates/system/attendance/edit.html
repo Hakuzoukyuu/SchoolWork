@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改教职工考勤')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-attendance-edit" th:object="${staffAttendance}">
+        <input name="attenId" th:field="*{attenId}" type="hidden">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">教职工编号：</label>
+                <div class="col-sm-8">
+                    <select name="staffId" class="form-control" id="staffIdSelect" required>
+                        <option value="">请选择教职工</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">排班日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="dutyDate" th:value="${#dates.format(staffAttendance.dutyDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 值班类型 回显 -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">值班类型：</label>
+                <div class="col-sm-8">
+                    <select name="dutyType" class="form-control" required th:field="*{dutyType}">
+                        <option value="">请选择值班类型</option>
+                        <option value="教学">教学</option>
+                        <option value="劳动">劳动</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- 打卡状态 回显 -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">打卡状态：</label>
+                <div class="col-sm-8">
+                    <select name="clockStatus" class="form-control" th:field="*{clockStatus}">
+                        <option value="正常">正常</option>
+                        <option value="迟到">迟到</option>
+                        <option value="早退">早退</option>
+                        <option value="缺勤">缺勤</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- 请假类型 回显 -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">请假类型：</label>
+                <div class="col-sm-8">
+                    <select name="leaveType" class="form-control" th:field="*{leaveType}">
+                        <option value="未请假">未请假</option>
+                        <option value="事假">事假</option>
+                        <option value="病假">病假</option>
+                        <option value="调休">调休</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">加班时长：</label>
+                <div class="col-sm-8">
+                    <input name="overtimeHours" th:field="*{overtimeHours}" class="form-control" type="text">
+                </div>
+            </div>
+        </div>
+        <!-- 审批状态：禁用，不可编辑，仅管理员后台修改 -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">审批状态：</label>
+                <div class="col-sm-8">
+                    <select name="auditStatus" class="form-control"  th:field="*{auditStatus}">
+                        <option value="待审核">待审核</option>
+                        <option value="已审核">已审核</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/attendance";
+    var currentStaffId = [[${staffAttendance.staffId}]];
+
+    function loadStaffList() {
+        $.ajax({
+            url: ctx + "system/info/list",
+            type: "post",
+            dataType: "json",
+            success: function(res) {
+                if (res.code === 0 && res.rows) {
+                    var select = $("#staffIdSelect");
+                    select.empty().append('<option value="">请选择教职工</option>');
+                    $.each(res.rows, function(i, staff) {
+                        var selected = staff.staffId === currentStaffId ? 'selected' : '';
+                        select.append('<option value="' + staff.staffId + '" ' + selected + '>' + staff.staffId + ' - ' + staff.staffName + '</option>');
+                    });
+                }
+            }
+        });
+    }
+
+    $(function() {
+        loadStaffList();
+        $("#form-attendance-edit").validate({focusCleanup: true});
+        $("input[name='dutyDate']").datetimepicker({
+            format: "yyyy-mm-dd", minView: "month", autoclose: true
+        });
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-attendance-edit').serialize());
+        }
+    }
+</script>
+</body>
+</html>

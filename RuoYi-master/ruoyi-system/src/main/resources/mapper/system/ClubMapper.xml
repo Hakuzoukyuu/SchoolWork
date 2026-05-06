@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ClubMapper">
+    
+    <resultMap type="Club" id="ClubResult">
+        <result property="clubId"    column="club_id"    />
+        <result property="clubName"    column="club_name"    />
+        <result property="clubType"    column="club_type"    />
+        <result property="leaderName"    column="leader_name"    />
+        <result property="leaderId"    column="leader_id"    />
+        <result property="approveStatus"    column="approve_status"    />
+        <result property="clubDesc"    column="club_desc"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="ClubClubMemberResult" type="Club" extends="ClubResult">
+        <collection property="clubMemberList" ofType="ClubMember" column="club_id" select="selectClubMemberList" />
+    </resultMap>
+
+    <resultMap type="ClubMember" id="ClubMemberResult">
+        <result property="memberId"    column="member_id"    />
+        <result property="clubId"    column="club_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="joinTime"    column="join_time"    />
+        <result property="memberRole"    column="member_role"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectClubVo">
+        select club_id, club_name, club_type, leader_name, leader_id, approve_status, club_desc, remark, create_time, update_time from club
+    </sql>
+
+    <select id="selectClubList" parameterType="Club" resultMap="ClubResult">
+        <include refid="selectClubVo"/>
+        <where>  
+            <if test="clubName != null  and clubName != ''"> and club_name like concat('%', #{clubName}, '%')</if>
+            <if test="clubType != null  and clubType != ''"> and club_type = #{clubType}</if>
+            <if test="leaderName != null  and leaderName != ''"> and leader_name like concat('%', #{leaderName}, '%')</if>
+            <if test="leaderId != null  and leaderId != ''"> and leader_id = #{leaderId}</if>
+            <if test="approveStatus != null  and approveStatus != ''"> and approve_status = #{approveStatus}</if>
+            <if test="clubDesc != null  and clubDesc != ''"> and club_desc = #{clubDesc}</if>
+        </where>
+    </select>
+    
+    <select id="selectClubByClubId" parameterType="Long" resultMap="ClubClubMemberResult">
+        select club_id, club_name, club_type, leader_name, leader_id, approve_status, club_desc, remark, create_time, update_time
+        from club
+        where club_id = #{clubId}
+    </select>
+
+    <select id="selectClubMemberList" resultMap="ClubMemberResult">
+        select member_id, club_id, student_id, student_name, join_time, member_role, remark, create_time, update_time
+        from club_member
+        where club_id = #{club_id}
+    </select>
+
+    <insert id="insertClub" parameterType="Club" useGeneratedKeys="true" keyProperty="clubId">
+        insert into club
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clubName != null and clubName != ''">club_name,</if>
+            <if test="clubType != null">club_type,</if>
+            <if test="leaderName != null">leader_name,</if>
+            <if test="leaderId != null">leader_id,</if>
+            <if test="approveStatus != null">approve_status,</if>
+            <if test="clubDesc != null">club_desc,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clubName != null and clubName != ''">#{clubName},</if>
+            <if test="clubType != null">#{clubType},</if>
+            <if test="leaderName != null">#{leaderName},</if>
+            <if test="leaderId != null">#{leaderId},</if>
+            <if test="approveStatus != null">#{approveStatus},</if>
+            <if test="clubDesc != null">#{clubDesc},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClub" parameterType="Club">
+        update club
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="clubName != null and clubName != ''">club_name = #{clubName},</if>
+            <if test="clubType != null">club_type = #{clubType},</if>
+            <if test="leaderName != null">leader_name = #{leaderName},</if>
+            <if test="leaderId != null">leader_id = #{leaderId},</if>
+            <if test="approveStatus != null">approve_status = #{approveStatus},</if>
+            <if test="clubDesc != null">club_desc = #{clubDesc},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where club_id = #{clubId}
+    </update>
+
+    <delete id="deleteClubByClubId" parameterType="Long">
+        delete from club where club_id = #{clubId}
+    </delete>
+
+    <delete id="deleteClubByClubIds" parameterType="String">
+        delete from club where club_id in 
+        <foreach item="clubId" collection="array" open="(" separator="," close=")">
+            #{clubId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteClubMemberByClubIds" parameterType="String">
+        delete from club_member where club_id in 
+        <foreach item="clubId" collection="array" open="(" separator="," close=")">
+            #{clubId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteClubMemberByClubId" parameterType="Long">
+        delete from club_member where club_id = #{clubId}
+    </delete>
+
+    <insert id="batchClubMember">
+        insert into club_member( member_id, club_id, student_id, student_name, join_time, member_role, remark, create_time, update_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.memberId}, #{item.clubId}, #{item.studentId}, #{item.studentName}, #{item.joinTime}, #{item.memberRole}, #{item.remark}, #{item.createTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+</mapper>

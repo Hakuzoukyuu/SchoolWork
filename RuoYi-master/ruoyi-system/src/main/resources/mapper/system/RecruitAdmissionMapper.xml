@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RecruitAdmissionMapper">
+    
+    <resultMap type="RecruitAdmission" id="RecruitAdmissionResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="studentType"    column="student_type"    />
+        <result property="phone"    column="phone"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="applyMajor"    column="apply_major"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="admitStatus"    column="admit_status"    />
+        <result property="className"    column="class_name"    />
+        <result property="preRegisterStatus"    column="pre_register_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectRecruitAdmissionVo">
+        select id, student_id, student_name, student_type, phone, id_card, apply_major, audit_status, admit_status, class_name, pre_register_status, remark, create_time, update_time from recruit_admission
+    </sql>
+
+    <select id="selectRecruitAdmissionList" parameterType="RecruitAdmission" resultMap="RecruitAdmissionResult">
+        <include refid="selectRecruitAdmissionVo"/>
+        <where>  
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="studentType != null  and studentType != ''"> and student_type = #{studentType}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="applyMajor != null  and applyMajor != ''"> and apply_major = #{applyMajor}</if>
+            <if test="auditStatus != null  and auditStatus != ''"> and audit_status = #{auditStatus}</if>
+            <if test="admitStatus != null  and admitStatus != ''"> and admit_status = #{admitStatus}</if>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="preRegisterStatus != null  and preRegisterStatus != ''"> and pre_register_status = #{preRegisterStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectRecruitAdmissionById" parameterType="Long" resultMap="RecruitAdmissionResult">
+        <include refid="selectRecruitAdmissionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRecruitAdmission" parameterType="RecruitAdmission" useGeneratedKeys="true" keyProperty="id">
+        insert into recruit_admission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null and studentName != ''">student_name,</if>
+            <if test="studentType != null and studentType != ''">student_type,</if>
+            <if test="phone != null">phone,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="applyMajor != null">apply_major,</if>
+            <if test="auditStatus != null">audit_status,</if>
+            <if test="admitStatus != null">admit_status,</if>
+            <if test="className != null">class_name,</if>
+            <if test="preRegisterStatus != null">pre_register_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null and studentName != ''">#{studentName},</if>
+            <if test="studentType != null and studentType != ''">#{studentType},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="applyMajor != null">#{applyMajor},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+            <if test="admitStatus != null">#{admitStatus},</if>
+            <if test="className != null">#{className},</if>
+            <if test="preRegisterStatus != null">#{preRegisterStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRecruitAdmission" parameterType="RecruitAdmission">
+        update recruit_admission
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="studentType != null and studentType != ''">student_type = #{studentType},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="applyMajor != null">apply_major = #{applyMajor},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+            <if test="admitStatus != null">admit_status = #{admitStatus},</if>
+            <if test="className != null">class_name = #{className},</if>
+            <if test="preRegisterStatus != null">pre_register_status = #{preRegisterStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRecruitAdmissionById" parameterType="Long">
+        delete from recruit_admission where id = #{id}
+    </delete>
+
+    <delete id="deleteRecruitAdmissionByIds" parameterType="String">
+        delete from recruit_admission where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

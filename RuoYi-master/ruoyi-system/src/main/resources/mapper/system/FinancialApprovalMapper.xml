@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FinancialApprovalMapper">
+    
+    <resultMap type="FinancialApproval" id="FinancialApprovalResult">
+        <result property="financialId"    column="financial_id"    />
+        <result property="approvalType"    column="approval_type"    />
+        <result property="approvalTitle"    column="approval_title"    />
+        <result property="applyUser"    column="apply_user"    />
+        <result property="applyDept"    column="apply_dept"    />
+        <result property="feeAmount"    column="fee_amount"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="approvalUser"    column="approval_user"    />
+        <result property="approvalTime"    column="approval_time"    />
+        <result property="accountRecord"    column="account_record"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectFinancialApprovalVo">
+        select financial_id, approval_type, approval_title, apply_user, apply_dept, fee_amount, approval_status, approval_user, approval_time, account_record, remark, create_time, update_time from financial_approval
+    </sql>
+
+    <select id="selectFinancialApprovalList" parameterType="FinancialApproval" resultMap="FinancialApprovalResult">
+        <include refid="selectFinancialApprovalVo"/>
+        <where>  
+            <if test="approvalType != null  and approvalType != ''"> and approval_type = #{approvalType}</if>
+            <if test="approvalTitle != null  and approvalTitle != ''"> and approval_title = #{approvalTitle}</if>
+            <if test="applyUser != null  and applyUser != ''"> and apply_user = #{applyUser}</if>
+            <if test="applyDept != null  and applyDept != ''"> and apply_dept = #{applyDept}</if>
+            <if test="feeAmount != null "> and fee_amount = #{feeAmount}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and approval_status = #{approvalStatus}</if>
+            <if test="approvalUser != null  and approvalUser != ''"> and approval_user = #{approvalUser}</if>
+            <if test="approvalTime != null "> and approval_time = #{approvalTime}</if>
+            <if test="accountRecord != null  and accountRecord != ''"> and account_record = #{accountRecord}</if>
+        </where>
+    </select>
+    
+    <select id="selectFinancialApprovalByFinancialId" parameterType="Long" resultMap="FinancialApprovalResult">
+        <include refid="selectFinancialApprovalVo"/>
+        where financial_id = #{financialId}
+    </select>
+
+    <insert id="insertFinancialApproval" parameterType="FinancialApproval" useGeneratedKeys="true" keyProperty="financialId">
+        insert into financial_approval
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="approvalType != null and approvalType != ''">approval_type,</if>
+            <if test="approvalTitle != null">approval_title,</if>
+            <if test="applyUser != null">apply_user,</if>
+            <if test="applyDept != null">apply_dept,</if>
+            <if test="feeAmount != null">fee_amount,</if>
+            <if test="approvalStatus != null and approvalStatus != ''">approval_status,</if>
+            <if test="approvalUser != null">approval_user,</if>
+            <if test="approvalTime != null">approval_time,</if>
+            <if test="accountRecord != null">account_record,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="approvalType != null and approvalType != ''">#{approvalType},</if>
+            <if test="approvalTitle != null">#{approvalTitle},</if>
+            <if test="applyUser != null">#{applyUser},</if>
+            <if test="applyDept != null">#{applyDept},</if>
+            <if test="feeAmount != null">#{feeAmount},</if>
+            <if test="approvalStatus != null and approvalStatus != ''">#{approvalStatus},</if>
+            <if test="approvalUser != null">#{approvalUser},</if>
+            <if test="approvalTime != null">#{approvalTime},</if>
+            <if test="accountRecord != null">#{accountRecord},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFinancialApproval" parameterType="FinancialApproval">
+        update financial_approval
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="approvalType != null and approvalType != ''">approval_type = #{approvalType},</if>
+            <if test="approvalTitle != null">approval_title = #{approvalTitle},</if>
+            <if test="applyUser != null">apply_user = #{applyUser},</if>
+            <if test="applyDept != null">apply_dept = #{applyDept},</if>
+            <if test="feeAmount != null">fee_amount = #{feeAmount},</if>
+            <if test="approvalStatus != null and approvalStatus != ''">approval_status = #{approvalStatus},</if>
+            <if test="approvalUser != null">approval_user = #{approvalUser},</if>
+            <if test="approvalTime != null">approval_time = #{approvalTime},</if>
+            <if test="accountRecord != null">account_record = #{accountRecord},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where financial_id = #{financialId}
+    </update>
+
+    <delete id="deleteFinancialApprovalByFinancialId" parameterType="Long">
+        delete from financial_approval where financial_id = #{financialId}
+    </delete>
+
+    <delete id="deleteFinancialApprovalByFinancialIds" parameterType="String">
+        delete from financial_approval where financial_id in 
+        <foreach item="financialId" collection="array" open="(" separator="," close=")">
+            #{financialId}
+        </foreach>
+    </delete>
+
+</mapper>
