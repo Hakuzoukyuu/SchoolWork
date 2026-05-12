@@ -1,7 +1,7 @@
-package com.ruoyi.CollegeManagement.service;
+package com.ruoyi.system.service;
 
 import java.util.List;
-import com.ruoyi.CollegeManagement.domain.CollegeInfo;
+import com.ruoyi.system.domain.CollegeInfo;
 
 /**
  * 学院信息Service接口

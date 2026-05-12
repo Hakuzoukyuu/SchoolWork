@@ -1,7 +1,7 @@
-package com.ruoyi.CollegeManagement.mapper;
+package com.ruoyi.system.mapper;
 
 import java.util.List;
-import com.ruoyi.CollegeManagement.domain.CollegeInfo;
+import com.ruoyi.system.domain.CollegeInfo;
 
 /**
  * 学院信息Mapper接口

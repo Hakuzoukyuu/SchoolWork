@@ -1,11 +1,11 @@
-package com.ruoyi.CollegeManagement.service.impl;
+package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.CollegeManagement.mapper.CollegeInfoMapper;
-import com.ruoyi.CollegeManagement.domain.CollegeInfo;
-import com.ruoyi.CollegeManagement.service.ICollegeInfoService;
+import com.ruoyi.system.mapper.CollegeInfoMapper;
+import com.ruoyi.system.domain.CollegeInfo;
+import com.ruoyi.system.service.ICollegeInfoService;
 import com.ruoyi.common.core.text.Convert;
 
 /**
