@@ -12,6 +12,7 @@
         <module name="ruoyi-generator" />
         <module name="ruoyi-ai" />
         <module name="ruoyi-quartz" />
+        <module name="ruoyi-visual" />
         <module name="ruoyi-admin" />
       </profile>
     </annotationProcessing>
@@ -26,6 +27,7 @@
       <module name="ruoyi-generator" options="-parameters" />
       <module name="ruoyi-quartz" options="-parameters" />
       <module name="ruoyi-system" options="-parameters" />
+      <module name="ruoyi-visual" options="-parameters" />
     </option>
   </component>
 </project>

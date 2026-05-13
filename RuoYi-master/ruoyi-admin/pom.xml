@@ -57,6 +57,13 @@
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
 
+        <!-- 可视化模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-visual</artifactId>
+            <version>${ruoyi.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
