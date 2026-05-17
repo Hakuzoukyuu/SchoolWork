@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CollegeInfoMapper">
+    
+    <resultMap type="CollegeInfo" id="CollegeInfoResult">
+        <result property="collegeId"    column="college_id"    />
+        <result property="collegeName"    column="college_name"    />
+        <result property="location"    column="location"    />
+        <result property="officialUrl"    column="official_url"    />
+    </resultMap>
+
+    <sql id="selectCollegeInfoVo">
+        select college_id, college_name, location, official_url from college_info
+    </sql>
+
+    <select id="selectCollegeInfoList" parameterType="CollegeInfo" resultMap="CollegeInfoResult">
+        <include refid="selectCollegeInfoVo"/>
+        <where>  
+            <if test="collegeName != null  and collegeName != ''"> and college_name like concat('%', #{collegeName}, '%')</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="officialUrl != null  and officialUrl != ''"> and official_url = #{officialUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectCollegeInfoByCollegeId" parameterType="Long" resultMap="CollegeInfoResult">
+        <include refid="selectCollegeInfoVo"/>
+        where college_id = #{collegeId}
+    </select>
+
+    <insert id="insertCollegeInfo" parameterType="CollegeInfo" useGeneratedKeys="true" keyProperty="collegeId">
+        insert into college_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collegeName != null and collegeName != ''">college_name,</if>
+            <if test="location != null">location,</if>
+            <if test="officialUrl != null">official_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collegeName != null and collegeName != ''">#{collegeName},</if>
+            <if test="location != null">#{location},</if>
+            <if test="officialUrl != null">#{officialUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCollegeInfo" parameterType="CollegeInfo">
+        update college_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="collegeName != null and collegeName != ''">college_name = #{collegeName},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="officialUrl != null">official_url = #{officialUrl},</if>
+        </trim>
+        where college_id = #{collegeId}
+    </update>
+
+    <delete id="deleteCollegeInfoByCollegeId" parameterType="Long">
+        delete from college_info where college_id = #{collegeId}
+    </delete>
+
+    <delete id="deleteCollegeInfoByCollegeIds" parameterType="String">
+        delete from college_info where college_id in 
+        <foreach item="collegeId" collection="array" open="(" separator="," close=")">
+            #{collegeId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentMentalMapper">
+    
+    <resultMap type="StudentMental" id="StudentMentalResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="className"    column="class_name"    />
+        <result property="mentalFile"    column="mental_file"    />
+        <result property="appointStatus"    column="appoint_status"    />
+        <result property="appointTime"    column="appoint_time"    />
+        <result property="surveyResult"    column="survey_result"    />
+        <result property="crisisStatus"    column="crisis_status"    />
+        <result property="handleRecord"    column="handle_record"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStudentMentalVo">
+        select id, student_id, student_name, class_name, mental_file, appoint_status, appoint_time, survey_result, crisis_status, handle_record, remark, create_time, update_time from student_mental
+    </sql>
+
+    <select id="selectStudentMentalList" parameterType="StudentMental" resultMap="StudentMentalResult">
+        <include refid="selectStudentMentalVo"/>
+        <where>  
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="mentalFile != null  and mentalFile != ''"> and mental_file = #{mentalFile}</if>
+            <if test="appointStatus != null  and appointStatus != ''"> and appoint_status = #{appointStatus}</if>
+            <if test="appointTime != null "> and appoint_time = #{appointTime}</if>
+            <if test="surveyResult != null  and surveyResult != ''"> and survey_result = #{surveyResult}</if>
+            <if test="crisisStatus != null  and crisisStatus != ''"> and crisis_status = #{crisisStatus}</if>
+            <if test="handleRecord != null  and handleRecord != ''"> and handle_record = #{handleRecord}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentMentalById" parameterType="Long" resultMap="StudentMentalResult">
+        <include refid="selectStudentMentalVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStudentMental" parameterType="StudentMental" useGeneratedKeys="true" keyProperty="id">
+        insert into student_mental
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="className != null">class_name,</if>
+            <if test="mentalFile != null">mental_file,</if>
+            <if test="appointStatus != null">appoint_status,</if>
+            <if test="appointTime != null">appoint_time,</if>
+            <if test="surveyResult != null">survey_result,</if>
+            <if test="crisisStatus != null">crisis_status,</if>
+            <if test="handleRecord != null">handle_record,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="className != null">#{className},</if>
+            <if test="mentalFile != null">#{mentalFile},</if>
+            <if test="appointStatus != null">#{appointStatus},</if>
+            <if test="appointTime != null">#{appointTime},</if>
+            <if test="surveyResult != null">#{surveyResult},</if>
+            <if test="crisisStatus != null">#{crisisStatus},</if>
+            <if test="handleRecord != null">#{handleRecord},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentMental" parameterType="StudentMental">
+        update student_mental
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="className != null">class_name = #{className},</if>
+            <if test="mentalFile != null">mental_file = #{mentalFile},</if>
+            <if test="appointStatus != null">appoint_status = #{appointStatus},</if>
+            <if test="appointTime != null">appoint_time = #{appointTime},</if>
+            <if test="surveyResult != null">survey_result = #{surveyResult},</if>
+            <if test="crisisStatus != null">crisis_status = #{crisisStatus},</if>
+            <if test="handleRecord != null">handle_record = #{handleRecord},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStudentMentalById" parameterType="Long">
+        delete from student_mental where id = #{id}
+    </delete>
+
+    <delete id="deleteStudentMentalByIds" parameterType="String">
+        delete from student_mental where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

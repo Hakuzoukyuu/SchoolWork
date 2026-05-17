@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RepairReportMapper">
+    
+    <resultMap type="RepairReport" id="RepairReportResult">
+        <result property="id"    column="id"    />
+        <result property="repairLocation"    column="repair_location"    />
+        <result property="repairContent"    column="repair_content"    />
+        <result property="reportPeople"    column="report_people"    />
+        <result property="reportTime"    column="report_time"    />
+        <result property="assignPeople"    column="assign_people"    />
+        <result property="repairStatus"    column="repair_status"    />
+        <result property="checkStatus"    column="check_status"    />
+        <result property="repairTime"    column="repair_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectRepairReportVo">
+        select id, repair_location, repair_content, report_people, report_time, assign_people, repair_status, check_status, repair_time, remark, create_time, update_time from repair_report
+    </sql>
+
+    <select id="selectRepairReportList" parameterType="RepairReport" resultMap="RepairReportResult">
+        <include refid="selectRepairReportVo"/>
+        <where>  
+            <if test="repairLocation != null  and repairLocation != ''"> and repair_location = #{repairLocation}</if>
+            <if test="repairContent != null  and repairContent != ''"> and repair_content = #{repairContent}</if>
+            <if test="reportPeople != null  and reportPeople != ''"> and report_people = #{reportPeople}</if>
+            <if test="reportTime != null "> and report_time = #{reportTime}</if>
+            <if test="assignPeople != null  and assignPeople != ''"> and assign_people = #{assignPeople}</if>
+            <if test="repairStatus != null  and repairStatus != ''"> and repair_status = #{repairStatus}</if>
+            <if test="checkStatus != null  and checkStatus != ''"> and check_status = #{checkStatus}</if>
+            <if test="repairTime != null "> and repair_time = #{repairTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectRepairReportById" parameterType="Long" resultMap="RepairReportResult">
+        <include refid="selectRepairReportVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRepairReport" parameterType="RepairReport" useGeneratedKeys="true" keyProperty="id">
+        insert into repair_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="repairLocation != null and repairLocation != ''">repair_location,</if>
+            <if test="repairContent != null and repairContent != ''">repair_content,</if>
+            <if test="reportPeople != null">report_people,</if>
+            <if test="reportTime != null">report_time,</if>
+            <if test="assignPeople != null">assign_people,</if>
+            <if test="repairStatus != null and repairStatus != ''">repair_status,</if>
+            <if test="checkStatus != null and checkStatus != ''">check_status,</if>
+            <if test="repairTime != null">repair_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="repairLocation != null and repairLocation != ''">#{repairLocation},</if>
+            <if test="repairContent != null and repairContent != ''">#{repairContent},</if>
+            <if test="reportPeople != null">#{reportPeople},</if>
+            <if test="reportTime != null">#{reportTime},</if>
+            <if test="assignPeople != null">#{assignPeople},</if>
+            <if test="repairStatus != null and repairStatus != ''">#{repairStatus},</if>
+            <if test="checkStatus != null and checkStatus != ''">#{checkStatus},</if>
+            <if test="repairTime != null">#{repairTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRepairReport" parameterType="RepairReport">
+        update repair_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="repairLocation != null and repairLocation != ''">repair_location = #{repairLocation},</if>
+            <if test="repairContent != null and repairContent != ''">repair_content = #{repairContent},</if>
+            <if test="reportPeople != null">report_people = #{reportPeople},</if>
+            <if test="reportTime != null">report_time = #{reportTime},</if>
+            <if test="assignPeople != null">assign_people = #{assignPeople},</if>
+            <if test="repairStatus != null and repairStatus != ''">repair_status = #{repairStatus},</if>
+            <if test="checkStatus != null and checkStatus != ''">check_status = #{checkStatus},</if>
+            <if test="repairTime != null">repair_time = #{repairTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRepairReportById" parameterType="Long">
+        delete from repair_report where id = #{id}
+    </delete>
+
+    <delete id="deleteRepairReportByIds" parameterType="String">
+        delete from repair_report where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

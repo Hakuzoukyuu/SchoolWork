@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('学生列表')" />
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>学号：</label>
+                                <input type="text" name="studentNo"/>
+                            </li>
+                            <li>
+                                <label>学生姓名：</label>
+                                <input type="text" name="studentName"/>
+                            </li>
+                            <li>
+                                <label>性别：</label>
+                                <input type="text" name="gender"/>
+                            </li>
+                            <li>
+                                <label>出生日期：</label>
+                                <input type="text" class="time-input" placeholder="请选择出生日期" name="birthDate"/>
+                            </li>
+                            <li>
+                                <label>身份证号：</label>
+                                <input type="text" name="idCard"/>
+                            </li>
+                            <li>
+                                <label>民族：</label>
+                                <input type="text" name="ethnic"/>
+                            </li>
+                            <li>
+                                <label>政治面貌：</label>
+                                <input type="text" name="political"/>
+                            </li>
+                            <li>
+                                <label>身高(cm)：</label>
+                                <input type="text" name="height"/>
+                            </li>
+                            <li>
+                                <label>体重(kg)：</label>
+                                <input type="text" name="weight"/>
+                            </li>
+                            <li>
+                                <label>学生手机号：</label>
+                                <input type="text" name="phone"/>
+                            </li>
+                            <li>
+                                <label>家长/监护人手机号：</label>
+                                <input type="text" name="parentPhone"/>
+                            </li>
+                            <li>
+                                <label>邮箱：</label>
+                                <input type="text" name="email"/>
+                            </li>
+                            <li>
+                                <label>微信号：</label>
+                                <input type="text" name="wechat"/>
+                            </li>
+                            <li>
+                                <label>QQ号：</label>
+                                <input type="text" name="qq"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:student:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:student:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:student:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:student:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            
+            <!-- 可视化区域 -->
+            <div class="col-sm-12" style="margin-top: 20px;">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>数据可视化</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <!-- 图表选择区域 -->
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-sm-3">
+                                <label class="control-label">图表类型：</label>
+                                <select id="chartType" class="form-control">
+                                    <option value="pie">饼图</option>
+                                    <option value="bar">柱状图</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">数据类型：</label>
+                                <select id="dataType" class="form-control">
+                                    <option value="gender">性别</option>
+                                    <option value="birthDate">出生日期</option>
+                                    <option value="ethnic">民族</option>
+                                    <option value="political">政治面貌</option>
+                                    <option value="bloodType">血型</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="control-label">&nbsp;</label>
+                                <button class="btn btn-primary form-control" onclick="loadChart()">生成图表</button>
+                            </div>
+                        </div>
+                        <!-- 图表展示区域 -->
+                        <div id="chartContainer" style="height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:student:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:student:remove')}]];
+        var prefix = ctx + "system/student";
+        var chart = null;
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "学生",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'studentId',
+                    title: '学生主键ID',
+                    visible: false
+                },
+                {
+                    field: 'studentNo',
+                    title: '学号'
+                },
+                {
+                    field: 'studentName',
+                    title: '学生姓名'
+                },
+                {
+                    field: 'gender',
+                    title: '性别'
+                },
+                {
+                    field: 'birthDate',
+                    title: '出生日期'
+                },
+                {
+                    field: 'idCard',
+                    title: '身份证号'
+                },
+                {
+                    field: 'ethnic',
+                    title: '民族'
+                },
+                {
+                    field: 'political',
+                    title: '政治面貌'
+                },
+                {
+                    field: 'bloodType',
+                    title: '血型'
+                },
+                {
+                    field: 'height',
+                    title: '身高(cm)'
+                },
+                {
+                    field: 'weight',
+                    title: '体重(kg)'
+                },
+                {
+                    field: 'phone',
+                    title: '学生手机号'
+                },
+                {
+                    field: 'parentPhone',
+                    title: '家长/监护人手机号'
+                },
+                {
+                    field: 'email',
+                    title: '邮箱'
+                },
+                {
+                    field: 'wechat',
+                    title: '微信号'
+                },
+                {
+                    field: 'qq',
+                    title: 'QQ号'
+                },
+                {
+                    field: 'remark',
+                    title: '备注信息'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.studentId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.studentId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+            
+            // 延迟初始化图表，确保DOM已加载完成
+            setTimeout(function() {
+                initChart();
+            }, 500);
+        });
+        
+        /**
+         * 初始化图表
+         */
+        function initChart() {
+            var chartContainer = document.getElementById('chartContainer');
+            if (chartContainer) {
+                chart = echarts.init(chartContainer);
+                // 初始加载性别饼图
+                loadChart();
+            } else {
+                console.error('图表容器未找到');
+            }
+        }
+        
+        /**
+         * 加载图表
+         */
+        function loadChart() {
+            if (!chart) {
+                initChart();
+                if (!chart) return;
+            }
+            
+            var chartType = $('#chartType').val();
+            var dataType = $('#dataType').val();
+            
+            console.log('加载图表: chartType=' + chartType + ', dataType=' + dataType);
+            
+            $.ajax({
+                url: ctx + "visual/chart",
+                type: "GET",
+                data: {
+                    chartType: chartType,
+                    dataType: dataType
+                },
+                success: function(res) {
+                    console.log('响应数据:', res);
+                    if (res.code === 0 && res.data && res.data.success) {
+                        renderChart(res.data);
+                    } else {
+                        // 显示错误信息
+                        chart.clear();
+                        var errorMsg = res.msg || '数据不足，无法绘制图像';
+                        chart.setOption({
+                            title: {
+                                text: errorMsg,
+                                left: 'center',
+                                top: 'middle',
+                                textStyle: {
+                                    color: '#ff0000',
+                                    fontSize: 16
+                                }
+                            }
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('加载图表失败:', error);
+                    if (chart) {
+                        chart.clear();
+                        chart.setOption({
+                            title: {
+                                text: '加载图表失败',
+                                left: 'center',
+                                top: 'middle',
+                                textStyle: {
+                                    color: '#ff0000',
+                                    fontSize: 16
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        
+        /**
+         * 渲染图表
+         */
+        function renderChart(data) {
+            if (!chart || !data) return;
+            
+            var chartType = data.chartType;
+            var dataTypeName = data.dataTypeName;
+            
+            console.log('渲染图表: ', data);
+            
+            if (chartType === 'pie') {
+                // 饼图
+                chart.setOption({
+                    title: {
+                        text: dataTypeName + '分布',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: data.labels || []
+                    },
+                    series: [{
+                        name: dataTypeName,
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '60%'],
+                        data: data.series || [],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }]
+                });
+            } else if (chartType === 'bar') {
+                // 柱状图
+                chart.setOption({
+                    title: {
+                        text: dataTypeName + '统计',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: data.labels || []
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '人数'
+                    },
+                    series: [{
+                        name: dataTypeName,
+                        type: 'bar',
+                        data: data.values || [],
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {offset: 0, color: '#83bff6'},
+                                {offset: 0.5, color: '#188df0'},
+                                {offset: 1, color: '#188df0'}
+                            ]),
+                            borderRadius: [4, 4, 0, 0]
+                        }
+                    }]
+                });
+            }
+        }
+    </script>
+</body>
+</html>

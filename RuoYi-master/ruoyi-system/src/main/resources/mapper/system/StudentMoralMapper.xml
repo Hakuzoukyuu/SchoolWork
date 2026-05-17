@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentMoralMapper">
+    
+    <resultMap type="StudentMoral" id="StudentMoralResult">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="classId"    column="class_id"    />
+        <result property="className"    column="class_name"    />
+        <result property="dailyScore"    column="daily_score"    />
+        <result property="campusScore"    column="campus_score"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="examStatus"    column="exam_status"    />
+        <result property="examTime"    column="exam_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStudentMoralVo">
+        select student_id, student_name, class_id, class_name, daily_score, campus_score, total_score, exam_status, exam_time, remark, create_time, update_time from student_moral
+    </sql>
+
+    <select id="selectStudentMoralList" parameterType="StudentMoral" resultMap="StudentMoralResult">
+        <include refid="selectStudentMoralVo"/>
+        <where>  
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="classId != null "> and class_id = #{classId}</if>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="dailyScore != null "> and daily_score = #{dailyScore}</if>
+            <if test="campusScore != null "> and campus_score = #{campusScore}</if>
+            <if test="totalScore != null "> and total_score = #{totalScore}</if>
+            <if test="examStatus != null  and examStatus != ''"> and exam_status = #{examStatus}</if>
+            <if test="examTime != null "> and exam_time = #{examTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentMoralByStudentId" parameterType="String" resultMap="StudentMoralResult">
+        <include refid="selectStudentMoralVo"/>
+        where student_id = #{studentId}
+    </select>
+
+    <insert id="insertStudentMoral" parameterType="StudentMoral">
+        insert into student_moral
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="classId != null">class_id,</if>
+            <if test="className != null">class_name,</if>
+            <if test="dailyScore != null">daily_score,</if>
+            <if test="campusScore != null">campus_score,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="examStatus != null">exam_status,</if>
+            <if test="examTime != null">exam_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="classId != null">#{classId},</if>
+            <if test="className != null">#{className},</if>
+            <if test="dailyScore != null">#{dailyScore},</if>
+            <if test="campusScore != null">#{campusScore},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="examStatus != null">#{examStatus},</if>
+            <if test="examTime != null">#{examTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentMoral" parameterType="StudentMoral">
+        update student_moral
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="classId != null">class_id = #{classId},</if>
+            <if test="className != null">class_name = #{className},</if>
+            <if test="dailyScore != null">daily_score = #{dailyScore},</if>
+            <if test="campusScore != null">campus_score = #{campusScore},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="examStatus != null">exam_status = #{examStatus},</if>
+            <if test="examTime != null">exam_time = #{examTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteStudentMoralByStudentId" parameterType="String">
+        delete from student_moral where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteStudentMoralByStudentIds" parameterType="String">
+        delete from student_moral where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ClubMemberMapper">
+    
+    <resultMap type="ClubMember" id="ClubMemberResult">
+        <result property="memberId"    column="member_id"    />
+        <result property="clubId"    column="club_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="joinTime"    column="join_time"    />
+        <result property="memberRole"    column="member_role"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectClubMemberVo">
+        select member_id, club_id, student_id, student_name, join_time, member_role, remark, create_time, update_time from club_member
+    </sql>
+
+    <select id="selectClubMemberList" parameterType="ClubMember" resultMap="ClubMemberResult">
+        <include refid="selectClubMemberVo"/>
+        <where>  
+            <if test="clubId != null "> and club_id = #{clubId}</if>
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="joinTime != null "> and join_time = #{joinTime}</if>
+            <if test="memberRole != null  and memberRole != ''"> and member_role = #{memberRole}</if>
+        </where>
+    </select>
+    
+    <select id="selectClubMemberByMemberId" parameterType="Long" resultMap="ClubMemberResult">
+        <include refid="selectClubMemberVo"/>
+        where member_id = #{memberId}
+    </select>
+
+    <insert id="insertClubMember" parameterType="ClubMember" useGeneratedKeys="true" keyProperty="memberId">
+        insert into club_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clubId != null">club_id,</if>
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null and studentName != ''">student_name,</if>
+            <if test="joinTime != null">join_time,</if>
+            <if test="memberRole != null">member_role,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clubId != null">#{clubId},</if>
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null and studentName != ''">#{studentName},</if>
+            <if test="joinTime != null">#{joinTime},</if>
+            <if test="memberRole != null">#{memberRole},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClubMember" parameterType="ClubMember">
+        update club_member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="clubId != null">club_id = #{clubId},</if>
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="joinTime != null">join_time = #{joinTime},</if>
+            <if test="memberRole != null">member_role = #{memberRole},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where member_id = #{memberId}
+    </update>
+
+    <delete id="deleteClubMemberByMemberId" parameterType="Long">
+        delete from club_member where member_id = #{memberId}
+    </delete>
+
+    <delete id="deleteClubMemberByMemberIds" parameterType="String">
+        delete from club_member where member_id in 
+        <foreach item="memberId" collection="array" open="(" separator="," close=")">
+            #{memberId}
+        </foreach>
+    </delete>
+
+</mapper>

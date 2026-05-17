@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CanteenStallMapper">
+    
+    <resultMap type="CanteenStall" id="CanteenStallResult">
+        <result property="stallId"    column="stall_id"    />
+        <result property="stallNo"    column="stall_no"    />
+        <result property="stallName"    column="stall_name"    />
+        <result property="canteenName"    column="canteen_name"    />
+        <result property="manager"    column="manager"    />
+        <result property="hygieneStatus"    column="hygiene_status"    />
+        <result property="checkPeople"    column="check_people"    />
+        <result property="checkTime"    column="check_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="CanteenStallCanteenDishResult" type="CanteenStall" extends="CanteenStallResult">
+        <collection property="canteenDishList" ofType="CanteenDish" column="stall_id" select="selectCanteenDishList" />
+    </resultMap>
+
+    <resultMap type="CanteenDish" id="CanteenDishResult">
+        <result property="dishId"    column="dish_id"    />
+        <result property="stallId"    column="stall_id"    />
+        <result property="dishName"    column="dish_name"    />
+        <result property="dishPrice"    column="dish_price"    />
+        <result property="dishCategory"    column="dish_category"    />
+        <result property="saleStatus"    column="sale_status"    />
+        <result property="consumeCount"    column="consume_count"    />
+        <result property="consumeTotal"    column="consume_total"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCanteenStallVo">
+        select stall_id, stall_no, stall_name, canteen_name, manager, hygiene_status, check_people, check_time, remark, create_time, update_time from canteen_stall
+    </sql>
+
+    <select id="selectCanteenStallList" parameterType="CanteenStall" resultMap="CanteenStallResult">
+        <include refid="selectCanteenStallVo"/>
+        <where>  
+            <if test="stallNo != null  and stallNo != ''"> and stall_no = #{stallNo}</if>
+            <if test="stallName != null  and stallName != ''"> and stall_name like concat('%', #{stallName}, '%')</if>
+            <if test="canteenName != null  and canteenName != ''"> and canteen_name like concat('%', #{canteenName}, '%')</if>
+            <if test="manager != null  and manager != ''"> and manager = #{manager}</if>
+            <if test="hygieneStatus != null  and hygieneStatus != ''"> and hygiene_status = #{hygieneStatus}</if>
+            <if test="checkPeople != null  and checkPeople != ''"> and check_people = #{checkPeople}</if>
+            <if test="checkTime != null "> and check_time = #{checkTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectCanteenStallByStallId" parameterType="Long" resultMap="CanteenStallCanteenDishResult">
+        select stall_id, stall_no, stall_name, canteen_name, manager, hygiene_status, check_people, check_time, remark, create_time, update_time
+        from canteen_stall
+        where stall_id = #{stallId}
+    </select>
+
+    <select id="selectCanteenDishList" resultMap="CanteenDishResult">
+        select dish_id, stall_id, dish_name, dish_price, dish_category, sale_status, consume_count, consume_total, remark, create_time, update_time
+        from canteen_dish
+        where stall_id = #{stall_id}
+    </select>
+
+    <insert id="insertCanteenStall" parameterType="CanteenStall" useGeneratedKeys="true" keyProperty="stallId">
+        insert into canteen_stall
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stallNo != null and stallNo != ''">stall_no,</if>
+            <if test="stallName != null and stallName != ''">stall_name,</if>
+            <if test="canteenName != null and canteenName != ''">canteen_name,</if>
+            <if test="manager != null and manager != ''">manager,</if>
+            <if test="hygieneStatus != null and hygieneStatus != ''">hygiene_status,</if>
+            <if test="checkPeople != null">check_people,</if>
+            <if test="checkTime != null">check_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stallNo != null and stallNo != ''">#{stallNo},</if>
+            <if test="stallName != null and stallName != ''">#{stallName},</if>
+            <if test="canteenName != null and canteenName != ''">#{canteenName},</if>
+            <if test="manager != null and manager != ''">#{manager},</if>
+            <if test="hygieneStatus != null and hygieneStatus != ''">#{hygieneStatus},</if>
+            <if test="checkPeople != null">#{checkPeople},</if>
+            <if test="checkTime != null">#{checkTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCanteenStall" parameterType="CanteenStall">
+        update canteen_stall
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stallNo != null and stallNo != ''">stall_no = #{stallNo},</if>
+            <if test="stallName != null and stallName != ''">stall_name = #{stallName},</if>
+            <if test="canteenName != null and canteenName != ''">canteen_name = #{canteenName},</if>
+            <if test="manager != null and manager != ''">manager = #{manager},</if>
+            <if test="hygieneStatus != null and hygieneStatus != ''">hygiene_status = #{hygieneStatus},</if>
+            <if test="checkPeople != null">check_people = #{checkPeople},</if>
+            <if test="checkTime != null">check_time = #{checkTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where stall_id = #{stallId}
+    </update>
+
+    <delete id="deleteCanteenStallByStallId" parameterType="Long">
+        delete from canteen_stall where stall_id = #{stallId}
+    </delete>
+
+    <delete id="deleteCanteenStallByStallIds" parameterType="String">
+        delete from canteen_stall where stall_id in 
+        <foreach item="stallId" collection="array" open="(" separator="," close=")">
+            #{stallId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteCanteenDishByStallIds" parameterType="String">
+        delete from canteen_dish where stall_id in 
+        <foreach item="stallId" collection="array" open="(" separator="," close=")">
+            #{stallId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteCanteenDishByStallId" parameterType="Long">
+        delete from canteen_dish where stall_id = #{stallId}
+    </delete>
+
+    <insert id="batchCanteenDish">
+        insert into canteen_dish( dish_id, stall_id, dish_name, dish_price, dish_category, sale_status, consume_count, consume_total, remark, create_time, update_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.dishId}, #{item.stallId}, #{item.dishName}, #{item.dishPrice}, #{item.dishCategory}, #{item.saleStatus}, #{item.consumeCount}, #{item.consumeTotal}, #{item.remark}, #{item.createTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+</mapper>

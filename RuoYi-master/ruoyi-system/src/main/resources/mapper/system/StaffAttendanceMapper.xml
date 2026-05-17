@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StaffAttendanceMapper">
+    
+    <resultMap type="StaffAttendance" id="StaffAttendanceResult">
+        <result property="attenId"    column="atten_id"    />
+        <result property="staffId"    column="staff_id"    />
+        <result property="dutyDate"    column="duty_date"    />
+        <result property="dutyType"    column="duty_type"    />
+        <result property="clockStatus"    column="clock_status"    />
+        <result property="leaveType"    column="leave_type"    />
+        <result property="overtimeHours"    column="overtime_hours"    />
+        <result property="auditStatus"    column="audit_status"    />
+    </resultMap>
+
+    <sql id="selectStaffAttendanceVo">
+        select atten_id, staff_id, duty_date, duty_type, clock_status, leave_type, overtime_hours, audit_status from staff_attendance
+    </sql>
+
+    <select id="selectStaffAttendanceList" parameterType="StaffAttendance" resultMap="StaffAttendanceResult">
+        <include refid="selectStaffAttendanceVo"/>
+        <where>  
+            <if test="staffId != null  and staffId != ''"> and staff_id = #{staffId}</if>
+            <if test="dutyDate != null "> and duty_date = #{dutyDate}</if>
+            <if test="dutyType != null  and dutyType != ''"> and duty_type = #{dutyType}</if>
+            <if test="clockStatus != null  and clockStatus != ''"> and clock_status = #{clockStatus}</if>
+            <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if>
+            <if test="overtimeHours != null "> and overtime_hours = #{overtimeHours}</if>
+            <if test="auditStatus != null  and auditStatus != ''"> and audit_status = #{auditStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectStaffAttendanceByAttenId" parameterType="Long" resultMap="StaffAttendanceResult">
+        <include refid="selectStaffAttendanceVo"/>
+        where atten_id = #{attenId}
+    </select>
+
+    <insert id="insertStaffAttendance" parameterType="StaffAttendance" useGeneratedKeys="true" keyProperty="attenId">
+        insert into staff_attendance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">staff_id,</if>
+            <if test="dutyDate != null">duty_date,</if>
+            <if test="dutyType != null">duty_type,</if>
+            <if test="clockStatus != null">clock_status,</if>
+            <if test="leaveType != null">leave_type,</if>
+            <if test="overtimeHours != null">overtime_hours,</if>
+            <if test="auditStatus != null">audit_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">#{staffId},</if>
+            <if test="dutyDate != null">#{dutyDate},</if>
+            <if test="dutyType != null">#{dutyType},</if>
+            <if test="clockStatus != null">#{clockStatus},</if>
+            <if test="leaveType != null">#{leaveType},</if>
+            <if test="overtimeHours != null">#{overtimeHours},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStaffAttendance" parameterType="StaffAttendance">
+        update staff_attendance
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">staff_id = #{staffId},</if>
+            <if test="dutyDate != null">duty_date = #{dutyDate},</if>
+            <if test="dutyType != null">duty_type = #{dutyType},</if>
+            <if test="clockStatus != null">clock_status = #{clockStatus},</if>
+            <if test="leaveType != null">leave_type = #{leaveType},</if>
+            <if test="overtimeHours != null">overtime_hours = #{overtimeHours},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+        </trim>
+        where atten_id = #{attenId}
+    </update>
+
+    <delete id="deleteStaffAttendanceByAttenId" parameterType="Long">
+        delete from staff_attendance where atten_id = #{attenId}
+    </delete>
+
+    <delete id="deleteStaffAttendanceByAttenIds" parameterType="String">
+        delete from staff_attendance where atten_id in 
+        <foreach item="attenId" collection="array" open="(" separator="," close=")">
+            #{attenId}
+        </foreach>
+    </delete>
+
+</mapper>
