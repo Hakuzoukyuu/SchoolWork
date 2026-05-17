@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CanteenDishMapper">
+    
+    <resultMap type="CanteenDish" id="CanteenDishResult">
+        <result property="dishId"    column="dish_id"    />
+        <result property="stallId"    column="stall_id"    />
+        <result property="dishName"    column="dish_name"    />
+        <result property="dishPrice"    column="dish_price"    />
+        <result property="dishCategory"    column="dish_category"    />
+        <result property="saleStatus"    column="sale_status"    />
+        <result property="consumeCount"    column="consume_count"    />
+        <result property="consumeTotal"    column="consume_total"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCanteenDishVo">
+        select dish_id, stall_id, dish_name, dish_price, dish_category, sale_status, consume_count, consume_total, remark, create_time, update_time from canteen_dish
+    </sql>
+
+    <select id="selectCanteenDishList" parameterType="CanteenDish" resultMap="CanteenDishResult">
+        <include refid="selectCanteenDishVo"/>
+        <where>  
+            <if test="stallId != null "> and stall_id = #{stallId}</if>
+            <if test="dishName != null  and dishName != ''"> and dish_name like concat('%', #{dishName}, '%')</if>
+            <if test="dishPrice != null "> and dish_price = #{dishPrice}</if>
+            <if test="dishCategory != null  and dishCategory != ''"> and dish_category = #{dishCategory}</if>
+            <if test="saleStatus != null  and saleStatus != ''"> and sale_status = #{saleStatus}</if>
+            <if test="consumeCount != null "> and consume_count = #{consumeCount}</if>
+            <if test="consumeTotal != null "> and consume_total = #{consumeTotal}</if>
+        </where>
+    </select>
+    
+    <select id="selectCanteenDishByDishId" parameterType="Long" resultMap="CanteenDishResult">
+        <include refid="selectCanteenDishVo"/>
+        where dish_id = #{dishId}
+    </select>
+
+    <insert id="insertCanteenDish" parameterType="CanteenDish" useGeneratedKeys="true" keyProperty="dishId">
+        insert into canteen_dish
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stallId != null">stall_id,</if>
+            <if test="dishName != null and dishName != ''">dish_name,</if>
+            <if test="dishPrice != null">dish_price,</if>
+            <if test="dishCategory != null and dishCategory != ''">dish_category,</if>
+            <if test="saleStatus != null and saleStatus != ''">sale_status,</if>
+            <if test="consumeCount != null">consume_count,</if>
+            <if test="consumeTotal != null">consume_total,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stallId != null">#{stallId},</if>
+            <if test="dishName != null and dishName != ''">#{dishName},</if>
+            <if test="dishPrice != null">#{dishPrice},</if>
+            <if test="dishCategory != null and dishCategory != ''">#{dishCategory},</if>
+            <if test="saleStatus != null and saleStatus != ''">#{saleStatus},</if>
+            <if test="consumeCount != null">#{consumeCount},</if>
+            <if test="consumeTotal != null">#{consumeTotal},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCanteenDish" parameterType="CanteenDish">
+        update canteen_dish
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stallId != null">stall_id = #{stallId},</if>
+            <if test="dishName != null and dishName != ''">dish_name = #{dishName},</if>
+            <if test="dishPrice != null">dish_price = #{dishPrice},</if>
+            <if test="dishCategory != null and dishCategory != ''">dish_category = #{dishCategory},</if>
+            <if test="saleStatus != null and saleStatus != ''">sale_status = #{saleStatus},</if>
+            <if test="consumeCount != null">consume_count = #{consumeCount},</if>
+            <if test="consumeTotal != null">consume_total = #{consumeTotal},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where dish_id = #{dishId}
+    </update>
+
+    <delete id="deleteCanteenDishByDishId" parameterType="Long">
+        delete from canteen_dish where dish_id = #{dishId}
+    </delete>
+
+    <delete id="deleteCanteenDishByDishIds" parameterType="String">
+        delete from canteen_dish where dish_id in 
+        <foreach item="dishId" collection="array" open="(" separator="," close=")">
+            #{dishId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('床位与学生入住子列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>关联所属宿舍ID：</label>
+                                <input type="text" name="dormId"/>
+                            </li>
+                            <li>
+                                <label>床位编号：</label>
+                                <input type="text" name="bedNo"/>
+                            </li>
+                            <li>
+                                <label>学生学号：</label>
+                                <input type="text" name="studentId"/>
+                            </li>
+                            <li>
+                                <label>学生姓名：</label>
+                                <input type="text" name="studentName"/>
+                            </li>
+                            <li>
+                                <label>个人卫生情况：</label>
+                                <input type="text" name="dailyHygiene"/>
+                            </li>
+                            <li>
+                                <label>晚查寝状态：</label>
+                                <input type="text" name="nightCheck"/>
+                            </li>
+                            <li>
+                                <label>查寝时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择查寝时间" name="checkTime"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:bed:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:bed:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:bed:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:bed:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:bed:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:bed:remove')}]];
+        var prefix = ctx + "system/bed";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "床位与学生入住子",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'bedId',
+                    title: '床位主键ID',
+                    visible: false
+                },
+                {
+                    field: 'dormId',
+                    title: '关联所属宿舍ID'
+                },
+                {
+                    field: 'bedNo',
+                    title: '床位编号'
+                },
+                {
+                    field: 'studentId',
+                    title: '学生学号'
+                },
+                {
+                    field: 'studentName',
+                    title: '学生姓名'
+                },
+                {
+                    field: 'bedStatus',
+                    title: '床位状态：空置/已入住/休学'
+                },
+                {
+                    field: 'dailyHygiene',
+                    title: '个人卫生情况'
+                },
+                {
+                    field: 'nightCheck',
+                    title: '晚查寝状态'
+                },
+                {
+                    field: 'checkTime',
+                    title: '查寝时间'
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.bedId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.bedId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

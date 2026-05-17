@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DormBedMapper">
+    
+    <resultMap type="DormBed" id="DormBedResult">
+        <result property="bedId"    column="bed_id"    />
+        <result property="dormId"    column="dorm_id"    />
+        <result property="bedNo"    column="bed_no"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="bedStatus"    column="bed_status"    />
+        <result property="dailyHygiene"    column="daily_hygiene"    />
+        <result property="nightCheck"    column="night_check"    />
+        <result property="checkTime"    column="check_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDormBedVo">
+        select bed_id, dorm_id, bed_no, student_id, student_name, bed_status, daily_hygiene, night_check, check_time, remark, create_time, update_time from dorm_bed
+    </sql>
+
+    <select id="selectDormBedList" parameterType="DormBed" resultMap="DormBedResult">
+        <include refid="selectDormBedVo"/>
+        <where>  
+            <if test="dormId != null "> and dorm_id = #{dormId}</if>
+            <if test="bedNo != null  and bedNo != ''"> and bed_no = #{bedNo}</if>
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="bedStatus != null  and bedStatus != ''"> and bed_status = #{bedStatus}</if>
+            <if test="dailyHygiene != null  and dailyHygiene != ''"> and daily_hygiene = #{dailyHygiene}</if>
+            <if test="nightCheck != null  and nightCheck != ''"> and night_check = #{nightCheck}</if>
+            <if test="checkTime != null "> and check_time = #{checkTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectDormBedByBedId" parameterType="Long" resultMap="DormBedResult">
+        <include refid="selectDormBedVo"/>
+        where bed_id = #{bedId}
+    </select>
+
+    <insert id="insertDormBed" parameterType="DormBed" useGeneratedKeys="true" keyProperty="bedId">
+        insert into dorm_bed
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dormId != null">dorm_id,</if>
+            <if test="bedNo != null and bedNo != ''">bed_no,</if>
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null and studentName != ''">student_name,</if>
+            <if test="bedStatus != null and bedStatus != ''">bed_status,</if>
+            <if test="dailyHygiene != null and dailyHygiene != ''">daily_hygiene,</if>
+            <if test="nightCheck != null and nightCheck != ''">night_check,</if>
+            <if test="checkTime != null">check_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dormId != null">#{dormId},</if>
+            <if test="bedNo != null and bedNo != ''">#{bedNo},</if>
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null and studentName != ''">#{studentName},</if>
+            <if test="bedStatus != null and bedStatus != ''">#{bedStatus},</if>
+            <if test="dailyHygiene != null and dailyHygiene != ''">#{dailyHygiene},</if>
+            <if test="nightCheck != null and nightCheck != ''">#{nightCheck},</if>
+            <if test="checkTime != null">#{checkTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDormBed" parameterType="DormBed">
+        update dorm_bed
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dormId != null">dorm_id = #{dormId},</if>
+            <if test="bedNo != null and bedNo != ''">bed_no = #{bedNo},</if>
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="bedStatus != null and bedStatus != ''">bed_status = #{bedStatus},</if>
+            <if test="dailyHygiene != null and dailyHygiene != ''">daily_hygiene = #{dailyHygiene},</if>
+            <if test="nightCheck != null and nightCheck != ''">night_check = #{nightCheck},</if>
+            <if test="checkTime != null">check_time = #{checkTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where bed_id = #{bedId}
+    </update>
+
+    <delete id="deleteDormBedByBedId" parameterType="Long">
+        delete from dorm_bed where bed_id = #{bedId}
+    </delete>
+
+    <delete id="deleteDormBedByBedIds" parameterType="String">
+        delete from dorm_bed where bed_id in 
+        <foreach item="bedId" collection="array" open="(" separator="," close=")">
+            #{bedId}
+        </foreach>
+    </delete>
+
+</mapper>

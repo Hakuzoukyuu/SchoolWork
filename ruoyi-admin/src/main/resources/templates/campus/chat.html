@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="UTF-8"/>
+    <title>校园智能助手</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 动态渐变流动背景（全屏） */
+        body {
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            font-family: "Microsoft YaHei", sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 背景动画 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 页面标题（直接在背景上） */
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            margin: 20px 0 40px;
+            letter-spacing: 2px;
+        }
+
+        /* 聊天区域（无背景、无框，直接在背景上） */
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 20px 30px;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 自定义滚动条 */
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.5);
+            border-radius: 3px;
+        }
+        .chat-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* 消息淡入动画 */
+        .message {
+            margin-bottom: 25px;
+            overflow: hidden;
+            animation: messageFade 0.3s ease forwards;
+        }
+        @keyframes messageFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 用户消息气泡（渐变，悬浮在背景上） */
+        .message.user .bubble {
+            background: linear-gradient(90deg, #69e0ff, #1890ff);
+            color: #fff;
+            float: right;
+            border-radius: 20px 20px 0 20px;
+            box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+        }
+
+        /* 助手消息气泡（半透明白色，适配背景） */
+        .message.assistant .bubble {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            float: left;
+            border-radius: 20px 20px 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .bubble {
+            padding: 15px 20px;
+            max-width: 75%;
+            word-wrap: break-word;
+            display: inline-block;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* 输入框区域（直接在背景底部，无框） */
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 输入框（透明风格） */
+        #questionInput {
+            flex: 1;
+            height: 50px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.85);
+            padding: 0 25px;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        #questionInput:focus {
+            border-color: #fff;
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+        }
+
+        /* 发送按钮（正常态） */
+        #sendBtn {
+            height: 50px;
+            width: 100px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, #1890ff, #40a9ff);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+            cursor: pointer;
+        }
+        #sendBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(24, 144, 255, 0.4);
+        }
+
+        /* 发送按钮：生成中状态 （自动放大以容纳文字） */
+        #sendBtn.generating {
+            width: auto;                /* 自适应宽度 */
+            min-width: 170px;           /* 保证文字不换行 */
+            padding-left: 22px;
+            padding-right: 22px;
+            background: linear-gradient(90deg, #ff4d4f, #ff7875);
+            box-shadow: 0 4px 15px rgba(255, 77, 79, 0.4);
+        }
+        #sendBtn.generating:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 77, 79, 0.5);
+        }
+
+        .bubble ul, .bubble ol {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        .bubble li {
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+<h1 class="page-title">
+    <i class="fa fa-graduation-cap" style="margin-right:10px;"></i>校园智能助手
+</h1>
+
+<div class="chat-body" id="chatBody">
+    <div id="messages"></div>
+</div>
+
+<div class="input-group">
+    <input type="text" class="form-control" id="questionInput" placeholder="👋 输入问题，例如：我想请假该怎么做？"/>
+    <button class="btn" id="sendBtn"><i class="fa fa-send"></i> 发送</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+<script>
+    $(function() {
+        var chatBody = $('#chatBody');
+        var messages = $('#messages');
+        var sendBtn = $('#sendBtn');
+        var questionInput = $('#questionInput');
+
+        // 当前请求的 AbortController
+        var currentController = null;
+        // 保存按钮原始 HTML
+        var originalBtnHtml = sendBtn.html();
+
+        // Markdown 渲染
+        function renderMarkdown(text) {
+            if (!text) return '';
+            marked.setOptions({
+                breaks: true,
+                gfm: true
+            });
+            return marked.parse(text);
+        }
+
+        // 添加消息到聊天区域
+        function addMessage(content, role) {
+            var cls = (role === 'user') ? 'user' : 'assistant';
+            var displayContent;
+            if (role === 'user') {
+                displayContent = $('<div>').text(content).html();
+            } else {
+                displayContent = renderMarkdown(content);
+            }
+            var html = '<div class="message ' + cls + '"><div class="bubble">' + displayContent + '</div></div>';
+            messages.append(html);
+            chatBody.scrollTop(chatBody.prop('scrollHeight'));
+        }
+
+        // 按钮进入“生成中…”状态
+        function setGeneratingState() {
+            sendBtn.addClass('generating');
+            sendBtn.html('<i class="fa fa-spinner fa-spin"></i> 生成中…（点击取消）');
+        }
+
+        // 按钮恢复正常状态
+        function resetSendBtn() {
+            sendBtn.removeClass('generating');
+            sendBtn.html(originalBtnHtml);
+        }
+
+        // 取消当前请求（如果有）
+        function abortCurrentRequest() {
+            if (currentController) {
+                currentController.abort();
+                // 注意：不在这里置空 currentController，因为后面会立即用新 controller 覆盖
+            }
+        }
+
+        // 发送消息的核心函数
+        function sendMessage() {
+            var question = questionInput.val().trim();
+            if (!question) return;
+
+            // 如果已有请求正在进行，取消它（用于新问题自动覆盖旧请求）
+            if (currentController) {
+                abortCurrentRequest();
+            }
+
+            // 添加用户消息到界面
+            addMessage(question, 'user');
+            questionInput.val('');
+
+            // 新建一个 AbortController 用于本次请求
+            var controller = new AbortController();
+            currentController = controller;   // 更新为当前请求的控制器
+
+            // 按钮进入生成中状态
+            setGeneratingState();
+
+            // 发起 API 请求
+            fetch('/api/ai/assistant/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: question }),
+                signal: controller.signal
+            })
+                .then(function(response) {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.json();
+                })
+                .then(function(res) {
+                    // **重要**：只有当这个请求仍然是最新的，才处理它的响应
+                    if (currentController !== controller) return;
+
+                    if (res.code === 0 || res.code === 200) {
+                        var answer = res.data || res.msg || '未收到回答';
+                        addMessage(answer, 'assistant');
+                    } else {
+                        addMessage('服务异常：' + (res.msg || '未知错误'), 'assistant');
+                    }
+                    // 完成后清除状态
+                    currentController = null;
+                    resetSendBtn();
+                })
+                .catch(function(err) {
+                    // **重要**：如果不是当前请求，完全不进行任何 UI 操作
+                    if (currentController !== controller) return;
+
+                    if (err.name === 'AbortError') {
+                        // 主动取消，不提示错误
+                        console.log('请求已被取消');
+                    } else {
+                        addMessage('网络错误，请重试（' + err.message + '）', 'assistant');
+                    }
+                    currentController = null;
+                    resetSendBtn();
+                });
+        }
+
+        // 发送按钮点击事件
+        sendBtn.click(function() {
+            // 如果正在生成中，点击按钮的作用是取消
+            if (currentController) {
+                abortCurrentRequest();
+                // 手动取消后手动重置状态
+                currentController = null;
+                resetSendBtn();
+                return;
+            }
+            // 否则正常发送
+            sendMessage();
+        });
+
+        // 回车键发送
+        questionInput.keypress(function(e) {
+            if (e.which === 13) {
+                sendMessage();
+            }
+        });
+    });
+</script>
+</body>
+</html>

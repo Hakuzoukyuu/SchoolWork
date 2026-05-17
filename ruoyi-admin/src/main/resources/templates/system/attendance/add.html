@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增教职工考勤')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-attendance-add">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">教职工编号：</label>
+                <div class="col-sm-8">
+                    <select name="staffId" class="form-control" id="staffIdSelect" required>
+                        <option value="">请选择教职工</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">排班日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="dutyDate" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 新增：值班类型（必填） -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">值班类型：</label>
+                <div class="col-sm-8">
+                    <select name="dutyType" class="form-control" required>
+                        <option value="">请选择值班类型</option>
+                        <option value="教学">教学</option>
+                        <option value="劳动">劳动</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- 新增：打卡状态（默认正常） -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">打卡状态：</label>
+                <div class="col-sm-8">
+                    <select name="clockStatus" class="form-control">
+                        <option value="正常" selected>正常</option>
+                        <option value="迟到">迟到</option>
+                        <option value="早退">早退</option>
+                        <option value="缺勤">缺勤</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- 新增：请假类型 -->
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">请假类型：</label>
+                <div class="col-sm-8">
+                    <select name="leaveType" class="form-control">
+                        <option value="未请假" selected>未请假</option>
+                        <option value="事假">事假</option>
+                        <option value="病假">病假</option>
+                        <option value="调休">调休</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">加班时长：</label>
+                <div class="col-sm-8">
+                    <input name="overtimeHours" class="form-control" type="text">
+                </div>
+            </div>
+        </div>
+        <!-- 审批状态：隐藏域，默认待审核，员工不可修改 -->
+        <input type="hidden" name="auditStatus" value="待审核">
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/attendance";
+
+    function loadStaffList() {
+        $.ajax({
+            url: ctx + "system/info/list",
+            type: "post",
+            dataType: "json",
+            success: function(res) {
+                if (res.code === 0 && res.rows) {
+                    var select = $("#staffIdSelect");
+                    select.empty().append('<option value="">请选择教职工</option>');
+                    $.each(res.rows, function(i, staff) {
+                        select.append('<option value="' + staff.staffId + '">' + staff.staffId + ' - ' + staff.staffName + '</option>');
+                    });
+                }
+            }
+        });
+    }
+
+    $(function() {
+        loadStaffList();
+        $("#form-attendance-add").validate({focusCleanup: true});
+        $("input[name='dutyDate']").datetimepicker({
+            format: "yyyy-mm-dd", minView: "month", autoclose: true
+        });
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-attendance-add').serialize());
+        }
+    }
+</script>
+</body>
+</html>

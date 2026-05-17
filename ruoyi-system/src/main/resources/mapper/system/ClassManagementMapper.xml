@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ClassManagementMapper">
+    
+    <resultMap type="ClassManagement" id="ClassManagementResult">
+        <result property="classId"    column="class_id"    />
+        <result property="className"    column="class_name"    />
+        <result property="grade"    column="grade"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="examScore"    column="exam_score"    />
+        <result property="classLevel"    column="class_level"    />
+        <result property="workRecord"    column="work_record"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectClassManagementVo">
+        select class_id, class_name, grade, teacher_name, exam_score, class_level, work_record, remark, create_time, update_time from class_management
+    </sql>
+
+    <select id="selectClassManagementList" parameterType="ClassManagement" resultMap="ClassManagementResult">
+        <include refid="selectClassManagementVo"/>
+        <where>  
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="grade != null  and grade != ''"> and grade = #{grade}</if>
+            <if test="teacherName != null  and teacherName != ''"> and teacher_name like concat('%', #{teacherName}, '%')</if>
+            <if test="examScore != null "> and exam_score = #{examScore}</if>
+            <if test="classLevel != null  and classLevel != ''"> and class_level = #{classLevel}</if>
+            <if test="workRecord != null  and workRecord != ''"> and work_record = #{workRecord}</if>
+        </where>
+    </select>
+    
+    <select id="selectClassManagementByClassId" parameterType="Long" resultMap="ClassManagementResult">
+        <include refid="selectClassManagementVo"/>
+        where class_id = #{classId}
+    </select>
+
+    <insert id="insertClassManagement" parameterType="ClassManagement" useGeneratedKeys="true" keyProperty="classId">
+        insert into class_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="className != null and className != ''">class_name,</if>
+            <if test="grade != null">grade,</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="examScore != null">exam_score,</if>
+            <if test="classLevel != null">class_level,</if>
+            <if test="workRecord != null">work_record,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="className != null and className != ''">#{className},</if>
+            <if test="grade != null">#{grade},</if>
+            <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
+            <if test="examScore != null">#{examScore},</if>
+            <if test="classLevel != null">#{classLevel},</if>
+            <if test="workRecord != null">#{workRecord},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClassManagement" parameterType="ClassManagement">
+        update class_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="className != null and className != ''">class_name = #{className},</if>
+            <if test="grade != null">grade = #{grade},</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="examScore != null">exam_score = #{examScore},</if>
+            <if test="classLevel != null">class_level = #{classLevel},</if>
+            <if test="workRecord != null">work_record = #{workRecord},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where class_id = #{classId}
+    </update>
+
+    <delete id="deleteClassManagementByClassId" parameterType="Long">
+        delete from class_management where class_id = #{classId}
+    </delete>
+
+    <delete id="deleteClassManagementByClassIds" parameterType="String">
+        delete from class_management where class_id in 
+        <foreach item="classId" collection="array" open="(" separator="," close=")">
+            #{classId}
+        </foreach>
+    </delete>
+
+</mapper>

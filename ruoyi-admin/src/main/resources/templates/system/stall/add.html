@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增食堂档口主')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-stall-add">
+            <h4 class="form-header h4">食堂档口主信息</h4>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">档口编号：</label>
+                    <div class="col-sm-8">
+                        <input name="stallNo" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">档口名称：</label>
+                    <div class="col-sm-8">
+                        <input name="stallName" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">所属食堂：</label>
+                    <div class="col-sm-8">
+                        <input name="canteenName" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">档口负责人：</label>
+                    <div class="col-sm-8">
+                        <input name="manager" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">检查人：</label>
+                    <div class="col-sm-8">
+                        <input name="checkPeople" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">检查时间：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <input name="checkTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">备注：</label>
+                    <div class="col-sm-8">
+                        <input name="remark" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">菜品台账子信息</h4>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="button" class="btn btn-white btn-sm" onclick="addRow()"><i class="fa fa-plus"> 增加</i></button>
+                    <button type="button" class="btn btn-white btn-sm" onclick="sub.delRow()"><i class="fa fa-minus"> 删除</i></button>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/stall"
+        $("#form-stall-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-stall-add').serialize());
+            }
+        }
+
+        $("input[name='checkTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $(function() {
+            var options = {
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                    	var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                    	return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'dishName',
+                    align: 'center',
+                    title: '菜品名称',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].dishName' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'dishPrice',
+                    align: 'center',
+                    title: '菜品单价',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].dishPrice' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'dishCategory',
+                    align: 'center',
+                    title: '菜品分类：素菜/荤菜/汤品',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].dishCategory' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'saleStatus',
+                    align: 'center',
+                    title: '销售状态：在售/售罄',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].saleStatus' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'consumeCount',
+                    align: 'center',
+                    title: '当日销量',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].consumeCount' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'consumeTotal',
+                    align: 'center',
+                    title: '菜品消费总额',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].consumeTotal' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'remark',
+                    align: 'center',
+                    title: '备注',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].remark' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'createTime',
+                    align: 'center',
+                    title: '创建时间',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].createTime' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'updateTime',
+                    align: 'center',
+                    title: '更新时间',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='canteenDishList[%s].updateTime' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var value = $.common.isNotEmpty(row.index) ? row.index : $.table.serialNumber(index);
+                        return '<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="sub.delRowByIndex(\'' + value + '\')"><i class="fa fa-remove"></i>删除</a>';
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function addRow() {
+            var count = $("#" + table.options.id).bootstrapTable('getData').length;
+            var row = {
+                index: $.table.serialNumber(count),
+                dishName: "",
+                dishPrice: "",
+                dishCategory: "",
+                saleStatus: "",
+                consumeCount: "",
+                consumeTotal: "",
+                remark: "",
+                createTime: "",
+                updateTime: "",
+            }
+            sub.addRow(row);
+        }
+    </script>
+</body>
+</html>

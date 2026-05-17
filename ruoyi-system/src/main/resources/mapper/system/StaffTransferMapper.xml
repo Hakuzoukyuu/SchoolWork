@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StaffTransferMapper">
+    
+    <resultMap type="StaffTransfer" id="StaffTransferResult">
+        <result property="transferId"    column="transfer_id"    />
+        <result property="staffId"    column="staff_id"    />
+        <result property="transferType"    column="transfer_type"    />
+        <result property="oldDepartment"    column="old_department"    />
+        <result property="newDepartment"    column="new_department"    />
+        <result property="transferTime"    column="transfer_time"    />
+        <result property="transferRemark"    column="transfer_remark"    />
+    </resultMap>
+
+    <sql id="selectStaffTransferVo">
+        select transfer_id, staff_id, transfer_type, old_department, new_department, transfer_time, transfer_remark from staff_transfer
+    </sql>
+
+    <select id="selectStaffTransferList" parameterType="StaffTransfer" resultMap="StaffTransferResult">
+        <include refid="selectStaffTransferVo"/>
+        <where>  
+            <if test="staffId != null  and staffId != ''"> and staff_id = #{staffId}</if>
+            <if test="transferType != null  and transferType != ''"> and transfer_type = #{transferType}</if>
+            <if test="oldDepartment != null  and oldDepartment != ''"> and old_department = #{oldDepartment}</if>
+            <if test="newDepartment != null  and newDepartment != ''"> and new_department = #{newDepartment}</if>
+            <if test="transferTime != null "> and transfer_time = #{transferTime}</if>
+            <if test="transferRemark != null  and transferRemark != ''"> and transfer_remark = #{transferRemark}</if>
+        </where>
+    </select>
+    
+    <select id="selectStaffTransferByTransferId" parameterType="Long" resultMap="StaffTransferResult">
+        <include refid="selectStaffTransferVo"/>
+        where transfer_id = #{transferId}
+    </select>
+
+    <insert id="insertStaffTransfer" parameterType="StaffTransfer" useGeneratedKeys="true" keyProperty="transferId">
+        insert into staff_transfer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">staff_id,</if>
+            <if test="transferType != null and transferType != ''">transfer_type,</if>
+            <if test="oldDepartment != null">old_department,</if>
+            <if test="newDepartment != null">new_department,</if>
+            <if test="transferTime != null">transfer_time,</if>
+            <if test="transferRemark != null">transfer_remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">#{staffId},</if>
+            <if test="transferType != null and transferType != ''">#{transferType},</if>
+            <if test="oldDepartment != null">#{oldDepartment},</if>
+            <if test="newDepartment != null">#{newDepartment},</if>
+            <if test="transferTime != null">#{transferTime},</if>
+            <if test="transferRemark != null">#{transferRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStaffTransfer" parameterType="StaffTransfer">
+        update staff_transfer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">staff_id = #{staffId},</if>
+            <if test="transferType != null and transferType != ''">transfer_type = #{transferType},</if>
+            <if test="oldDepartment != null">old_department = #{oldDepartment},</if>
+            <if test="newDepartment != null">new_department = #{newDepartment},</if>
+            <if test="transferTime != null">transfer_time = #{transferTime},</if>
+            <if test="transferRemark != null">transfer_remark = #{transferRemark},</if>
+        </trim>
+        where transfer_id = #{transferId}
+    </update>
+
+    <delete id="deleteStaffTransferByTransferId" parameterType="Long">
+        delete from staff_transfer where transfer_id = #{transferId}
+    </delete>
+
+    <delete id="deleteStaffTransferByTransferIds" parameterType="String">
+        delete from staff_transfer where transfer_id in 
+        <foreach item="transferId" collection="array" open="(" separator="," close=")">
+            #{transferId}
+        </foreach>
+    </delete>
+
+</mapper>

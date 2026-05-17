@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('教职工基础档案主列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>姓名：</label>
+                                <input type="text" name="staffName"/>
+                            </li>
+                            <li>
+                                <label>所属部门：</label>
+                                <input type="text" name="department"/>
+                            </li>
+                            <li>
+                                <label>职称：</label>
+                                <input type="text" name="jobTitle"/>
+                            </li>
+                            <li>
+                                <label>学历：</label>
+                                <input type="text" name="education"/>
+                            </li>
+                            <li>
+                                <label>合同开始时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择合同开始时间" name="contractStart"/>
+                            </li>
+                            <li>
+                                <label>合同到期时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择合同到期时间" name="contractEnd"/>
+                            </li>
+                            <li>
+                                <label>联系电话：</label>
+                                <input type="text" name="phone"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:info:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:info:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:info:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:info:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:info:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:info:remove')}]];
+        var prefix = ctx + "system/info";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "教职工基础档案主",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'staffId',
+                    title: '教职工编号(唯一主键)',
+                    visible: false
+                },
+                {
+                    field: 'staffName',
+                    title: '姓名'
+                },
+                {
+                    field: 'staffType',
+                    title: '人员类型：教师/行政/后勤'
+                },
+                {
+                    field: 'department',
+                    title: '所属部门'
+                },
+                {
+                    field: 'jobTitle',
+                    title: '职称'
+                },
+                {
+                    field: 'education',
+                    title: '学历'
+                },
+                {
+                    field: 'contractType',
+                    title: '合同类型'
+                },
+                {
+                    field: 'contractStart',
+                    title: '合同开始时间'
+                },
+                {
+                    field: 'contractEnd',
+                    title: '合同到期时间'
+                },
+                {
+                    field: 'phone',
+                    title: '联系电话'
+                },
+                {
+                    field: 'staffStatus',
+                    title: '在职状态：在岗/借调/离职/退休'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.staffId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.staffId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

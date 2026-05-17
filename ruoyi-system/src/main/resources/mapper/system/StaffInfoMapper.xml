@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StaffInfoMapper">
+    
+    <resultMap type="StaffInfo" id="StaffInfoResult">
+        <result property="staffId"    column="staff_id"    />
+        <result property="staffName"    column="staff_name"    />
+        <result property="staffType"    column="staff_type"    />
+        <result property="department"    column="department"    />
+        <result property="jobTitle"    column="job_title"    />
+        <result property="education"    column="education"    />
+        <result property="contractType"    column="contract_type"    />
+        <result property="contractStart"    column="contract_start"    />
+        <result property="contractEnd"    column="contract_end"    />
+        <result property="phone"    column="phone"    />
+        <result property="staffStatus"    column="staff_status"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectStaffInfoVo">
+        select staff_id, staff_name, staff_type, department, job_title, education, contract_type, contract_start, contract_end, phone, staff_status, create_time from staff_info
+    </sql>
+
+    <select id="selectStaffInfoList" parameterType="StaffInfo" resultMap="StaffInfoResult">
+        <include refid="selectStaffInfoVo"/>
+        <where>  
+            <if test="staffName != null  and staffName != ''"> and staff_name like concat('%', #{staffName}, '%')</if>
+            <if test="staffType != null  and staffType != ''"> and staff_type = #{staffType}</if>
+            <if test="department != null  and department != ''"> and department = #{department}</if>
+            <if test="jobTitle != null  and jobTitle != ''"> and job_title = #{jobTitle}</if>
+            <if test="education != null  and education != ''"> and education = #{education}</if>
+            <if test="contractType != null  and contractType != ''"> and contract_type = #{contractType}</if>
+            <if test="contractStart != null "> and contract_start = #{contractStart}</if>
+            <if test="contractEnd != null "> and contract_end = #{contractEnd}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="staffStatus != null  and staffStatus != ''"> and staff_status = #{staffStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectStaffInfoByStaffId" parameterType="String" resultMap="StaffInfoResult">
+        <include refid="selectStaffInfoVo"/>
+        where staff_id = #{staffId}
+    </select>
+
+    <insert id="insertStaffInfo" parameterType="StaffInfo">
+        insert into staff_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="staffId != null">staff_id,</if>
+            <if test="staffName != null and staffName != ''">staff_name,</if>
+            <if test="staffType != null and staffType != ''">staff_type,</if>
+            <if test="department != null and department != ''">department,</if>
+            <if test="jobTitle != null">job_title,</if>
+            <if test="education != null">education,</if>
+            <if test="contractType != null">contract_type,</if>
+            <if test="contractStart != null">contract_start,</if>
+            <if test="contractEnd != null">contract_end,</if>
+            <if test="phone != null">phone,</if>
+            <if test="staffStatus != null">staff_status,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="staffId != null">#{staffId},</if>
+            <if test="staffName != null and staffName != ''">#{staffName},</if>
+            <if test="staffType != null and staffType != ''">#{staffType},</if>
+            <if test="department != null and department != ''">#{department},</if>
+            <if test="jobTitle != null">#{jobTitle},</if>
+            <if test="education != null">#{education},</if>
+            <if test="contractType != null">#{contractType},</if>
+            <if test="contractStart != null">#{contractStart},</if>
+            <if test="contractEnd != null">#{contractEnd},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="staffStatus != null">#{staffStatus},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStaffInfo" parameterType="StaffInfo">
+        update staff_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staffName != null and staffName != ''">staff_name = #{staffName},</if>
+            <if test="staffType != null and staffType != ''">staff_type = #{staffType},</if>
+            <if test="department != null and department != ''">department = #{department},</if>
+            <if test="jobTitle != null">job_title = #{jobTitle},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="contractType != null">contract_type = #{contractType},</if>
+            <if test="contractStart != null">contract_start = #{contractStart},</if>
+            <if test="contractEnd != null">contract_end = #{contractEnd},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="staffStatus != null">staff_status = #{staffStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where staff_id = #{staffId}
+    </update>
+
+    <delete id="deleteStaffInfoByStaffId" parameterType="String">
+        delete from staff_info where staff_id = #{staffId}
+    </delete>
+
+    <delete id="deleteStaffInfoByStaffIds" parameterType="String">
+        delete from staff_info where staff_id in 
+        <foreach item="staffId" collection="array" open="(" separator="," close=")">
+            #{staffId}
+        </foreach>
+    </delete>
+
+</mapper>

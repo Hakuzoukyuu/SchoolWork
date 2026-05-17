@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StaffPerformanceMapper">
+    
+    <resultMap type="StaffPerformance" id="StaffPerformanceResult">
+        <result property="perfId"    column="perf_id"    />
+        <result property="staffId"    column="staff_id"    />
+        <result property="assessType"    column="assess_type"    />
+        <result property="assessTerm"    column="assess_term"    />
+        <result property="scoreTotal"    column="score_total"    />
+        <result property="assessResult"    column="assess_result"    />
+        <result property="assessTime"    column="assess_time"    />
+    </resultMap>
+
+    <sql id="selectStaffPerformanceVo">
+        select perf_id, staff_id, assess_type, assess_term, score_total, assess_result, assess_time from staff_performance
+    </sql>
+
+    <select id="selectStaffPerformanceList" parameterType="StaffPerformance" resultMap="StaffPerformanceResult">
+        <include refid="selectStaffPerformanceVo"/>
+        <where>  
+            <if test="staffId != null  and staffId != ''"> and staff_id = #{staffId}</if>
+            <if test="assessType != null  and assessType != ''"> and assess_type = #{assessType}</if>
+            <if test="assessTerm != null  and assessTerm != ''"> and assess_term = #{assessTerm}</if>
+            <if test="scoreTotal != null "> and score_total = #{scoreTotal}</if>
+            <if test="assessResult != null  and assessResult != ''"> and assess_result = #{assessResult}</if>
+            <if test="assessTime != null "> and assess_time = #{assessTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectStaffPerformanceByPerfId" parameterType="Long" resultMap="StaffPerformanceResult">
+        <include refid="selectStaffPerformanceVo"/>
+        where perf_id = #{perfId}
+    </select>
+
+    <insert id="insertStaffPerformance" parameterType="StaffPerformance" useGeneratedKeys="true" keyProperty="perfId">
+        insert into staff_performance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">staff_id,</if>
+            <if test="assessType != null and assessType != ''">assess_type,</if>
+            <if test="assessTerm != null">assess_term,</if>
+            <if test="scoreTotal != null">score_total,</if>
+            <if test="assessResult != null">assess_result,</if>
+            <if test="assessTime != null">assess_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">#{staffId},</if>
+            <if test="assessType != null and assessType != ''">#{assessType},</if>
+            <if test="assessTerm != null">#{assessTerm},</if>
+            <if test="scoreTotal != null">#{scoreTotal},</if>
+            <if test="assessResult != null">#{assessResult},</if>
+            <if test="assessTime != null">#{assessTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStaffPerformance" parameterType="StaffPerformance">
+        update staff_performance
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">staff_id = #{staffId},</if>
+            <if test="assessType != null and assessType != ''">assess_type = #{assessType},</if>
+            <if test="assessTerm != null">assess_term = #{assessTerm},</if>
+            <if test="scoreTotal != null">score_total = #{scoreTotal},</if>
+            <if test="assessResult != null">assess_result = #{assessResult},</if>
+            <if test="assessTime != null">assess_time = #{assessTime},</if>
+        </trim>
+        where perf_id = #{perfId}
+    </update>
+
+    <delete id="deleteStaffPerformanceByPerfId" parameterType="Long">
+        delete from staff_performance where perf_id = #{perfId}
+    </delete>
+
+    <delete id="deleteStaffPerformanceByPerfIds" parameterType="String">
+        delete from staff_performance where perf_id in 
+        <foreach item="perfId" collection="array" open="(" separator="," close=")">
+            #{perfId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('维修报修列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>报修位置：</label>
+                                <input type="text" name="repairLocation"/>
+                            </li>
+                            <li>
+                                <label>报修人：</label>
+                                <input type="text" name="reportPeople"/>
+                            </li>
+                            <li>
+                                <label>报修时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择报修时间" name="reportTime"/>
+                            </li>
+                            <li>
+                                <label>派单处理人：</label>
+                                <input type="text" name="assignPeople"/>
+                            </li>
+                            <li>
+                                <label>维修完成时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择维修完成时间" name="repairTime"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:report:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:report:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:report:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:report:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:report:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:report:remove')}]];
+        var prefix = ctx + "system/report";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "维修报修",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'repairLocation',
+                    title: '报修位置'
+                },
+                {
+                    field: 'repairContent',
+                    title: '报修内容'
+                },
+                {
+                    field: 'reportPeople',
+                    title: '报修人'
+                },
+                {
+                    field: 'reportTime',
+                    title: '报修时间'
+                },
+                {
+                    field: 'assignPeople',
+                    title: '派单处理人'
+                },
+                {
+                    field: 'repairStatus',
+                    title: '维修状态：待派单/处理中/已完成'
+                },
+                {
+                    field: 'checkStatus',
+                    title: '验收状态：未验收/已验收'
+                },
+                {
+                    field: 'repairTime',
+                    title: '维修完成时间'
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

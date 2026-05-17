@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentPaymentMapper">
+    
+    <resultMap type="StudentPayment" id="StudentPaymentResult">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="major"    column="major"    />
+        <result property="tuitionFee"    column="tuition_fee"    />
+        <result property="dormFee"    column="dorm_fee"    />
+        <result property="otherFee"    column="other_fee"    />
+        <result property="managedFee"    column="managed_fee"    />
+        <result property="totalFee"    column="total_fee"    />
+        <result property="paidFee"    column="paid_fee"    />
+        <result property="unpaidFee"    column="unpaid_fee"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payStatus"    column="pay_status"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="payOrderNo"    column="pay_order_no"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStudentPaymentVo">
+        select student_id, student_name, major, tuition_fee, dorm_fee, other_fee, managed_fee, total_fee, paid_fee, unpaid_fee, pay_type, pay_status, pay_time, pay_order_no, remark, create_time, update_time from student_payment
+    </sql>
+
+    <select id="selectStudentPaymentList" parameterType="StudentPayment" resultMap="StudentPaymentResult">
+        <include refid="selectStudentPaymentVo"/>
+        <where>  
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="major != null  and major != ''"> and major = #{major}</if>
+            <if test="tuitionFee != null "> and tuition_fee = #{tuitionFee}</if>
+            <if test="dormFee != null "> and dorm_fee = #{dormFee}</if>
+            <if test="otherFee != null "> and other_fee = #{otherFee}</if>
+            <if test="managedFee != null "> and managed_fee = #{managedFee}</if>
+            <if test="totalFee != null "> and total_fee = #{totalFee}</if>
+            <if test="paidFee != null "> and paid_fee = #{paidFee}</if>
+            <if test="unpaidFee != null "> and unpaid_fee = #{unpaidFee}</if>
+            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+            <if test="payStatus != null  and payStatus != ''"> and pay_status = #{payStatus}</if>
+            <if test="payTime != null "> and pay_time = #{payTime}</if>
+            <if test="payOrderNo != null  and payOrderNo != ''"> and pay_order_no = #{payOrderNo}</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentPaymentByStudentId" parameterType="String" resultMap="StudentPaymentResult">
+        <include refid="selectStudentPaymentVo"/>
+        where student_id = #{studentId}
+    </select>
+
+    <insert id="insertStudentPayment" parameterType="StudentPayment">
+        insert into student_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="studentName != null and studentName != ''">student_name,</if>
+            <if test="major != null">major,</if>
+            <if test="tuitionFee != null">tuition_fee,</if>
+            <if test="dormFee != null">dorm_fee,</if>
+            <if test="otherFee != null">other_fee,</if>
+            <if test="managedFee != null">managed_fee,</if>
+            <if test="totalFee != null">total_fee,</if>
+            <if test="paidFee != null">paid_fee,</if>
+            <if test="unpaidFee != null">unpaid_fee,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="payStatus != null and payStatus != ''">pay_status,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="payOrderNo != null">pay_order_no,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="studentName != null and studentName != ''">#{studentName},</if>
+            <if test="major != null">#{major},</if>
+            <if test="tuitionFee != null">#{tuitionFee},</if>
+            <if test="dormFee != null">#{dormFee},</if>
+            <if test="otherFee != null">#{otherFee},</if>
+            <if test="managedFee != null">#{managedFee},</if>
+            <if test="totalFee != null">#{totalFee},</if>
+            <if test="paidFee != null">#{paidFee},</if>
+            <if test="unpaidFee != null">#{unpaidFee},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="payStatus != null and payStatus != ''">#{payStatus},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="payOrderNo != null">#{payOrderNo},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentPayment" parameterType="StudentPayment">
+        update student_payment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="major != null">major = #{major},</if>
+            <if test="tuitionFee != null">tuition_fee = #{tuitionFee},</if>
+            <if test="dormFee != null">dorm_fee = #{dormFee},</if>
+            <if test="otherFee != null">other_fee = #{otherFee},</if>
+            <if test="managedFee != null">managed_fee = #{managedFee},</if>
+            <if test="totalFee != null">total_fee = #{totalFee},</if>
+            <if test="paidFee != null">paid_fee = #{paidFee},</if>
+            <if test="unpaidFee != null">unpaid_fee = #{unpaidFee},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="payStatus != null and payStatus != ''">pay_status = #{payStatus},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="payOrderNo != null">pay_order_no = #{payOrderNo},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteStudentPaymentByStudentId" parameterType="String">
+        delete from student_payment where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteStudentPaymentByStudentIds" parameterType="String">
+        delete from student_payment where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+
+</mapper>
