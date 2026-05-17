@@ -156,9 +156,9 @@ ollama:
   base:
     url: http://localhost:11434
   chat:
-    model: qwen3:8b
+    model: qwen3.5:9b
   embedding:
-    model: nomic-embed-text
+    model: nomic-embed-text    # 专门的嵌入模型，效果更好
 campus:
   docs:
     path: docs   # 或指定绝对路径如 D:/ruoyi/docs

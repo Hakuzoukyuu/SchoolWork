@@ -16,10 +16,10 @@ public class AiConfig {
     @Value("${ollama.base.url:http://localhost:11434}")
     private String ollamaBaseUrl;
 
-    @Value("${ollama.chat.model:qwen3:8b}")      // 默认模型已改为8b
+    @Value("${ollama.chat.model:qwen3.5:9b}")      // 默认模型为 qwen3.5:9b
     private String chatModelName;
 
-    @Value("${ollama.embedding.model:nomic-embed-text}")
+    @Value("${ollama.embedding.model:nomic-embed-text}")  // 默认使用专门的嵌入模型
     private String embeddingModelName;
 
     @Bean
